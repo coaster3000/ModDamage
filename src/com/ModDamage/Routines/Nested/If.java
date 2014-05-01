@@ -3,15 +3,15 @@ package com.ModDamage.Routines.Nested;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Conditionals.Conditional;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
+import com.ModDamage.Routines.Conditionals.Conditional;
 
 public class If extends NestedRoutine
 {
@@ -71,7 +71,7 @@ public class If extends NestedRoutine
 				conditional = null;
 			}
 			
-			LogUtil.info((isElse? "Else " : "") + (matcher.group(3) != null? "" : ("If: " + conditional)));
+			ModDamageLogger.info((isElse? "Else " : "") + (matcher.group(3) != null? "" : ("If: " + conditional)));
 			
 			
 			If routine = new If(scriptLine, isElse, conditional);

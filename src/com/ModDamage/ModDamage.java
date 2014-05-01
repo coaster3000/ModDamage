@@ -1,6 +1,5 @@
 package com.ModDamage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,18 +14,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.ModDamage.MDLogger.DebugSetting;
-import com.ModDamage.PluginConfiguration.LoadState;
-import com.ModDamage.MDLogger.OutputPreset;
+import com.ModDamage.ModDamageLogger.DebugSetting;
+import com.ModDamage.ModDamageLogger.OutputPreset;
+import com.ModDamage.ModDamagePluginConfiguration.LoadState;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ExternalPluginManager;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Events.Command;
-import com.ModDamage.Events.Init;
-import com.ModDamage.Events.Repeat;
-import com.ModDamage.Magic.MagicStuff;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Minecraft.Events.Command;
+import com.ModDamage.Backend.Minecraft.Events.Init;
+import com.ModDamage.Backend.Minecraft.Events.MDEvent;
+import com.ModDamage.Backend.Minecraft.Events.Repeat;
+import com.ModDamage.Backend.Minecraft.Magic.MagicStuff;
+import com.ModDamage.External.ExtensionManager;
+import com.ModDamage.External.ModDamageExtension;
 import com.ModDamage.Server.MDServer;
-import com.ModDamage.Tags.TagManager;
 
 /**
  * "ModDamage" for Bukkit
@@ -34,21 +34,26 @@ import com.ModDamage.Tags.TagManager;
  * @authors Erich Gubler, Matt Peterson <ricochet1k@gmail.com>
  * 
  */
-public class ModDamage extends JavaPlugin
+public class ModDamage extends JavaPlugin implements ModDamageExtension
 {
-	protected static PluginConfiguration configuration;
+	//singleton pattern code
+	private static ModDamage instance;
+	public static ModDamage getInstance()
+	{
+		return instance;
+	}
+	public ModDamage() { instance = this; }
+	protected static ModDamagePluginConfiguration configuration;
 
 	public static boolean isEnabled = false;
 	private static final String errorString_Permissions = chatPrepend(ChatColor.RED) + "You don't have access to that command.";
-
-	private static TagManager tagger = null;
 	
 
 	// //////////////////////// INITIALIZATION
 	@Override
 	public void onLoad() {
 		super.onLoad(); //Just in case bukkit loads stuff in here.
-		configuration = new PluginConfiguration(this); //Fixes NPE on registering extensions from onLoad in other plugins.
+		configuration = new ModDamagePluginConfiguration(); //Fixes NPE on registering extensions from onLoad in other plugins.
 	}
 
 	@Override
@@ -78,38 +83,19 @@ public class ModDamage extends JavaPlugin
 		Repeat.instance.reset();
 		MDEvent.unregisterEvents();
 		
-		if (tagger != null) { tagger.close(); tagger = null; }
+		TagManager.getInstance().disable();
 		isEnabled = false;
-		configuration.log.setLogFile(null); //Cleanup locks.
-		configuration.printToLog(Level.INFO, "Disabled.");
+		ModDamageLogger.getInstance().setLogFile(null); //Cleanup locks.
+		ModDamageLogger.info("Disabled.");
 		PluginCommand.setPlugin(null); //Prevents possible memory leaks on /reload command
 	}
 
 	public void reload(boolean reloadingAll)
 	{
-		File taggerFile = (tagger != null)? tagger.file : new File(this.getDataFolder(), "tags.yml");
-		
-		if((configuration.reload(reloadingAll) && reloadingAll) || !taggerFile.exists())
+		if((configuration.reload(reloadingAll) && reloadingAll))
 		{
-			if(tagger != null) { tagger.close(); tagger = null; }
-
-//			long[] tagConfigIntegers = { TagManager.defaultInterval, TagManager.defaultInterval * 4 };
-//			LinkedHashMap<String, Object> tagConfigurationTree = configuration.castToStringMap("Tagging", configuration.getConfigMap().get("Tagging"));
-//			if(tagConfigurationTree != null)
-//			{
-//				String[] tagConfigStrings = { TagManager.configString_save, TagManager.configString_clean };
-//				Object[] tagConfigObjects =	{PluginConfiguration.getCaseInsensitiveValue(tagConfigurationTree, tagConfigStrings[0]), PluginConfiguration.getCaseInsensitiveValue(tagConfigurationTree, tagConfigStrings[1]) };
-//				for(int i = 0; i < tagConfigObjects.length; i++)
-//				{
-//					if(tagConfigObjects[i] != null)
-//					{
-//						if(tagConfigObjects[i] instanceof Integer)
-//							tagConfigIntegers[i] = (Integer)tagConfigObjects[i];
-//						else configuration.addToLogRecord(OutputPreset.FAILURE, "Error: Could not read value for Tagging setting \"" + tagConfigStrings[i] + "\"");
-//					}
-//				}
-//			}
-			tagger = new TagManager(taggerFile, configuration.tags_save_interval);
+			TagManager.getInstance().disable();
+			TagManager.getInstance().enable();
 		}
 
         Init.initAll();
@@ -133,28 +119,6 @@ public class ModDamage extends JavaPlugin
 
 	private enum PluginCommand
 	{
-//		CHECK(false, "\\sc(?:heck)?(\\s\\d+)?", "/md (check | c) - check configuration")
-//		{
-//			@Override
-//			protected void handleCommand(Player player, Matcher matcher)
-//			{
-//				if(player == null)
-//				{
-//					configuration.printToLog(Level.INFO, "Complete log record for this server:");
-//					configuration.sendLogRecord(null, 9001);
-//					configuration.printToLog(Level.INFO, "End of log record.");
-//				}
-//				else
-//				{
-//					if(matcher.group(1) == null)
-//					{
-//						if(hasPermission(player, "moddamage.check"))
-//							configuration.sendLogRecord(player, 0);
-//					}
-//					else configuration.sendLogRecord(player, Integer.parseInt(matcher.group(1).substring(1)));
-//				}
-//			}
-//		},
 		DEBUG(false, "\\sd(?:ebug)?(?:\\s(\\w+))?", "/md (debug | d) [debugType] - change debug type")
 		{
 			@Override
@@ -179,13 +143,13 @@ public class ModDamage extends JavaPlugin
 			protected void handleCommand(Player player, Matcher matcher)
 			{
 				boolean reloadingAll = matcher.group(1) != null;
-				if(player != null) configuration.printToLog(Level.INFO, "Reload initiated by user " + player.getName() + "...");
+				if(player != null) ModDamageLogger.printToLog(Level.INFO, "Reload initiated by user " + player.getName() + "...");
 				plugin.reload(reloadingAll);
 				if(player != null)
 					switch(LoadState.pluginState)
 					{
 						case SUCCESS:
-							int worstValue = configuration.getWorstLogMessageLevel().intValue();
+							int worstValue = ModDamageLogger.getInstance().getWorstLogMessageLevel().intValue();
 							
 							if (worstValue >= Level.SEVERE.intValue()) {
 								player.sendMessage(chatPrepend(ChatColor.YELLOW) + "Reloaded with errors.");
@@ -197,7 +161,7 @@ public class ModDamage extends JavaPlugin
 								player.sendMessage(chatPrepend(ChatColor.GREEN) + "Reloaded!");
 							}
 							else {
-								player.sendMessage(chatPrepend(ChatColor.YELLOW) + "Weird reload: " + configuration.getWorstLogMessageLevel());
+								player.sendMessage(chatPrepend(ChatColor.YELLOW) + "Weird reload: " + ModDamageLogger.getInstance().getWorstLogMessageLevel());
 							}
 							
 							break;
@@ -227,12 +191,12 @@ public class ModDamage extends JavaPlugin
 			{
 				if(matcher.group(1).equalsIgnoreCase("clear"))
 				{
-					tagger.clear();
+					TagManager.getInstance().clear();
 					sendMessage(player, "Tags cleared.", ChatColor.GREEN);
 				}
 				else
 				{
-					tagger.save();
+					TagManager.getInstance().saveFile();;
 					sendMessage(player, "Tags saved.", ChatColor.GREEN);
 				}
 			}
@@ -284,7 +248,7 @@ public class ModDamage extends JavaPlugin
 	{
 		if(player != null)
 			player.sendMessage(chatPrepend(color) + message);
-		else configuration.printToLog(Level.INFO, message);
+		else ModDamageLogger.info(message);
 	}
 
 	static String chatPrepend(ChatColor color){ return color + "[" + ChatColor.DARK_RED + "Mod" + ChatColor.DARK_BLUE + "Damage" + color + "] "; }
@@ -294,7 +258,7 @@ public class ModDamage extends JavaPlugin
 		if(status != isEnabled)
 		{
 			isEnabled = status;
-			configuration.printToLog(Level.INFO, "Plugin " + (isEnabled ? "en" : "dis") + "abled.");
+			ModDamageLogger.info("Plugin " + (isEnabled ? "en" : "dis") + "abled.");
 			if(player != null)
 				player.sendMessage(chatPrepend(ChatColor.GREEN) + "Plugin " + (isEnabled ? "en" : "dis") + "abled.");
 		}
@@ -317,29 +281,23 @@ public class ModDamage extends JavaPlugin
 			StringBuffer sb = new StringBuffer().append("ModDamage commands:\n").append("/moddamage | /md - bring up this help message");
 			for (PluginCommand cmd:PluginCommand.values())
 				sb.append("\n").append(cmd.help);
-			if(forError) configuration.printToLog(Level.SEVERE, "Error: invalid command syntax.");
-			configuration.printToLog(Level.INFO, sb.toString());
+			if(forError) ModDamageLogger.printToLog(Level.SEVERE, "Error: invalid command syntax.");
+			ModDamageLogger.printToLog(Level.INFO, sb.toString());
 		}
 	}
 
 ///////////////// HELPER FUNCTIONS
-	public static void addToLogRecord(OutputPreset preset, String message){ configuration.addToLogRecord(preset, message); }
-	public static void addToLogRecord(OutputPreset preset, ScriptLine line, String message){ configuration.addToLogRecord(preset, line, message); }
+	public static void addToLogRecord(OutputPreset preset, String message){ ModDamageLogger.getInstance().addToLogRecord(preset, message); }
+	public static void addToLogRecord(OutputPreset preset, ScriptLine line, String message){ ModDamageLogger.getInstance().addToLogRecord(preset, line, message); }
 	
 	public static void changeIndentation(boolean forward)
 	{
-		getPluginConfiguration().changeIndentation(forward);
+		ModDamageLogger.getInstance().changeIndentation(forward);
 	}
 	
 	public static void printToLog(Level level, String message) {
-		getPluginConfiguration().printToLog(level, message);
+		ModDamageLogger.printToLog(level, message);
 	}
-
-	public static DebugSetting getDebugSetting(){ return configuration.getDebugSetting(); }
-
-	public static TagManager getTagger(){ return tagger; }
-
-	public static PluginConfiguration getPluginConfiguration(){ return configuration; }
 
 	public static final HashSet<Material> goThroughThese = new HashSet<Material>(Arrays.asList(
 			Material.AIR,
@@ -364,7 +322,7 @@ public class ModDamage extends JavaPlugin
 	
 	public static void registerExtension(ModDamageExtension extension)
 	{
-		ExternalPluginManager.registerExtension(extension);
+		ExtensionManager.registerExtension(extension);
 	}
 
 	public static void reportBailException(BailException bailException)

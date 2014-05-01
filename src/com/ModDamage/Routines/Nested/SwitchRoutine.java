@@ -5,28 +5,28 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ModDamage.LogUtil;
-import com.ModDamage.MDLogger.OutputPreset;
+import com.ModDamage.ModDamageLogger;
+import com.ModDamage.ModDamageLogger.OutputPreset;
 import com.ModDamage.Utils;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Backend.ScriptLineHandler;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.ScriptLineHandler;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
-import com.ModDamage.Routines.Routines;
+import com.ModDamage.Routines.RoutineList;
 
 public class SwitchRoutine extends NestedRoutine
 {
 	protected final boolean all;
 	protected final List<IDataProvider<Boolean>> switchCases; // = new ArrayList<IDataProvider<Boolean>>();
-	protected final List<Routines> switchRoutines; // = new ArrayList<Routines>();
+	protected final List<RoutineList> switchRoutines; // = new ArrayList<Routines>();
 //	public final boolean isLoaded;
 	public final List<String> failedCases = new ArrayList<String>();
 	
-	protected SwitchRoutine(ScriptLine scriptLine, boolean all, EventInfo info, List<IDataProvider<Boolean>> switchCases, List<Routines> switchRoutines)
+	protected SwitchRoutine(ScriptLine scriptLine, boolean all, EventInfo info, List<IDataProvider<Boolean>> switchCases, List<RoutineList> switchRoutines)
 	{
 		super(scriptLine);
 		this.all = all;
@@ -34,34 +34,6 @@ public class SwitchRoutine extends NestedRoutine
 		assert(switchCases.size() == switchRoutines.size());
 		this.switchCases = switchCases;
 		this.switchRoutines = switchRoutines;
-//		boolean caseFailed = false;
-//		for(int i = 0; i < switchCases.size(); i++)
-//		{
-//			//get the case first, see if it refers to anything valid
-//			String switchCase = switchCases.get(i);
-//			IDataProvider<Boolean> matchedCase = DataProvider.parse(info, Boolean.class, switchType + "." + switchCases.get(i));
-//			if(matchedCase != null)
-//				NestedRoutine.paddedLogRecord(OutputPreset.INFO, " case: \"" + switchCase + "\"");
-//			else
-//			{
-//				NestedRoutine.paddedLogRecord(OutputPreset.INFO, " case (failed): \"" + switchCase + "\"");
-//				caseFailed = true;
-//			}
-//			//then grab the routines
-//			Routines routines = RoutineAliaser.parseRoutines(nestedContents.get(i), info);
-//			if(routines != null)
-//			{
-//				this.switchCases.add(matchedCase);
-//				this.switchRoutines.add(routines);
-//				NestedRoutine.paddedLogRecord(OutputPreset.INFO_VERBOSE, " End case \"" + switchCase + "\"");
-//			}	
-//			else
-//			{
-//				NestedRoutine.paddedLogRecord(OutputPreset.FAILURE, " Invalid content in case \"" + switchCase + "\"");
-//				caseFailed = true;
-//			}
-//		}
-//		isLoaded = !caseFailed;
 	}
 	
 	@Override
@@ -103,7 +75,7 @@ public class SwitchRoutine extends NestedRoutine
 		final EventInfo info;
 		
 		final List<IDataProvider<Boolean>> switchCases = new ArrayList<IDataProvider<Boolean>>();
-		final List<Routines> switchRoutines = new ArrayList<Routines>();
+		final List<RoutineList> switchRoutines = new ArrayList<RoutineList>();
 		
 		public SwitchRoutineBuilder(ScriptLine scriptLine, String switchType, boolean all, EventInfo info)
 		{
@@ -131,12 +103,12 @@ public class SwitchRoutine extends NestedRoutine
 			IDataProvider<Boolean> matchedCase = DataProvider.parse(info, Boolean.class, switchType + "." + line.line);
 			if(matchedCase == null) return null;
 			
-			Routines routines = new Routines();
+			RoutineList routines = new RoutineList();
 			
 			switchCases.add(matchedCase);
 			switchRoutines.add(routines);
 			
-			LogUtil.info(" case " + matchedCase + ":");
+			ModDamageLogger.info(" case " + matchedCase + ":");
 			
 			return routines.getLineHandler(info);
 		}
@@ -154,61 +126,7 @@ public class SwitchRoutine extends NestedRoutine
 		public IRoutineBuilder getNew(Matcher matcher, ScriptLine scriptLine, EventInfo info)
 		{
 			NestedRoutine.paddedLogRecord(OutputPreset.INFO, "Switch: \"" + matcher.group(2) + "\"");
-//			SwitchRoutine routine = new SwitchRoutine(scriptLine, matcher.group(2), matcher.group(1) != null, info);
 			return new SwitchRoutineBuilder(scriptLine, matcher.group(2), matcher.group(1) != null, info);
-			
-//			if(nestedContent != null)
-//			{
-//				NestedRoutine.paddedLogRecord(OutputPreset.INFO, "Switch: \"" + matcher.group() + "\"");
-//				
-//				if(nestedContent != null && nestedContent instanceof List)
-//				{
-//					List<?> rawSwitchCases = (List<?>)nestedContent;
-//					List<String> switchCases = new ArrayList<String>();
-//					List<Object> nestedContents = new ArrayList<Object>();
-//					boolean finished = true;
-//					for(Object object : rawSwitchCases)
-//					{
-//						if((object instanceof LinkedHashMap) && ((LinkedHashMap<?, ?>)object).size() == 1)
-//						{
-//							LinkedHashMap<String, Object> tempMap = ((LinkedHashMap<String, Object>)object);
-//							switchCases.addAll(tempMap.keySet());
-//							nestedContents.addAll(tempMap.values());
-//						}
-//						else 
-//						{
-//							finished = false;
-//							break;
-//						}
-//					}
-//					if(finished)
-//					{
-//						SwitchRoutine routine = new SwitchRoutine(scriptLine, matcher.group(2), matcher.group(1) != null, info, switchCases, nestedContents);
-//						if(routine.isLoaded)
-//						{
-//							NestedRoutine.paddedLogRecord(OutputPreset.INFO_VERBOSE, "End switch \"" + matcher.group() + "\"");
-//							return routine;
-//						}
-//						else 
-//						{
-//							LogUtil.console_only("");
-//							LogUtil.error("Invalid content in switch \"" + matcher.group() + "\"");
-//							for(String caseName : routine.failedCases)
-//								LogUtil.error("Error: invalid case \"" + caseName + "\"");
-//							LogUtil.console_only("");
-//						}
-//					}
-//				}
-//				else
-//				{
-//					LogUtil.error("Error: unexpected content " + nestedContent.toString() + " nested in switch \"" + matcher + "\"");
-//					LogUtil.console_only("");
-//				}
-//			}
-//			
-//			LogUtil.error("Error: invalid switch \"" + matcher.group() + "\"" + (ModDamage.getDebugSetting().equals(DebugSetting.VERBOSE)?"\n":""));
-//			
-//			return null;
 		}
 	}
 }

@@ -11,19 +11,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.ModDamage.LogUtil;
 import com.ModDamage.ModDamage;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.StringMatcher;
-import com.ModDamage.Alias.MessageAliaser;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Backend.ScriptLineHandler;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Expressions.LiteralString;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.ScriptLineHandler;
+import com.ModDamage.Backend.Configuration.Alias.MessageAliaser;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
+import com.ModDamage.Routines.Expressions.LiteralString;
 
 public class Message extends Routine 
 {
@@ -60,7 +60,7 @@ public class Message extends Routine
 						@Override
 						public void sendMessages(String[] msgs, EventData data)
 						{
-							Logger log = ModDamage.getPluginConfiguration().getLog().log;
+							Logger log = ModDamage.getInstance().getLogger();
 							for(String msg : msgs)
 								log.info(msg);
 						}
@@ -151,7 +151,7 @@ public class Message extends Routine
 			MessageTarget messageTarget = MessageTarget.match(sm, info);
 			if(messageTarget == null)
 			{
-				LogUtil.error("Bad message target: "+matcher.group(1));
+				ModDamageLogger.error("Bad message target: "+matcher.group(1));
 				return null;
 			}
 			
@@ -161,25 +161,25 @@ public class Message extends Routine
 				Collection<IDataProvider<String>> messages = MessageAliaser.match(targetEnd.group(1), info);
 				if (messages == null)
 				{
-//					LogUtil.error("This message form can only be used for message aliases. Please use the following instead.");
-//					LogUtil.error("    message."+matcher.group(1)+": '" + matcher.group(2) + "'");
+//					ModDamageLogger.error("This message form can only be used for message aliases. Please use the following instead.");
+//					ModDamageLogger.error("    message."+matcher.group(1)+": '" + matcher.group(2) + "'");
 					return null;
 				}
 				
 				
 				Message routine = new Message(scriptLine, messageTarget, messages);
-				LogUtil.info("Message (" + messageTarget + "):" );
+				ModDamageLogger.info("Message (" + messageTarget + "):" );
 				ModDamage.changeIndentation(true);
 				for (IDataProvider<String> msg : messages)
 				{
-					LogUtil.info(msg.toString());
+					ModDamageLogger.info(msg.toString());
 				}
 				ModDamage.changeIndentation(false);
 				return new RoutineBuilder(routine);
 			}
 			
 
-			LogUtil.info("Message (" + messageTarget + "):" );
+			ModDamageLogger.info("Message (" + messageTarget + "):" );
 			ModDamage.changeIndentation(true);
 			
 			MessageRoutineBuilder builder = new MessageRoutineBuilder(scriptLine, messageTarget, info);
@@ -215,7 +215,7 @@ public class Message extends Routine
 					((LiteralString) msgDP).colorize();
 				}
 				messages.add(msgDP);
-				LogUtil.info(msgDP.toString());
+				ModDamageLogger.info(msgDP.toString());
 			}
 		}
 

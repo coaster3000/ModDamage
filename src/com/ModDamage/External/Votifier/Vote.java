@@ -5,11 +5,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
-import com.ModDamage.MDEvent;
 import com.ModDamage.ModDamage;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
+import com.ModDamage.Backend.Minecraft.Events.MDEvent;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
 import com.vexsoftware.votifier.model.VotifierEvent;
 
 public class Vote extends MDEvent

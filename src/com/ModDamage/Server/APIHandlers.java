@@ -15,11 +15,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.json.JSONWriter;
 
-import com.ModDamage.MDEvent;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.DataProvider.ParserData;
-import com.ModDamage.Parsing.DataProvider.TransformerData;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider.ParserData;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider.TransformerData;
+import com.ModDamage.Backend.Minecraft.Events.MDEvent;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
 import com.ModDamage.Routines.Routine.RoutineFactory;
 import com.ModDamage.Server.NanoHTTPD.Response;

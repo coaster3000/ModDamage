@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -14,14 +13,14 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.ModDamage.StringMatcher;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.BaseDataParser;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.FunctionParser;
-import com.ModDamage.Parsing.IDataProvider;
-import com.ModDamage.Parsing.Property.Properties;
-import com.ModDamage.Parsing.Property.SettableProperty;
+import com.ModDamage.Backend.Configuration.Parsing.BaseDataParser;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.FunctionParser;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.Property.Properties;
+import com.ModDamage.Backend.Configuration.Parsing.Property.SettableProperty;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 
 public class VaultSupport
 {

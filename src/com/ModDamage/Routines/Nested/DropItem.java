@@ -6,19 +6,19 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Location;
 
-import com.ModDamage.LogUtil;
-import com.ModDamage.Alias.ItemAliaser;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ItemHolder;
-import com.ModDamage.Backend.ModDamageItemStack;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
-import com.ModDamage.Expressions.LiteralNumber;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Alias.ItemAliaser;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.ItemHolder;
+import com.ModDamage.Backend.Minecraft.ModDamageItemStack;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
 import com.ModDamage.Routines.Routine;
+import com.ModDamage.Routines.Expressions.LiteralNumber;
 
 public class DropItem extends NestedRoutine
 {
@@ -106,7 +106,7 @@ public class DropItem extends NestedRoutine
 
             if (quantity == null) return null;
 
-            LogUtil.info("Drop item at " + locationDP + ": " + items);
+            ModDamageLogger.info("Drop item at " + locationDP + ": " + items);
 			
 			DropItem routine = new DropItem(scriptLine, locationDP, items, quantity);
 			return new NestedRoutineBuilder(routine, routine.routines, info.chain(myInfo));

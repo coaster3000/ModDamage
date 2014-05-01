@@ -4,23 +4,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
-import com.ModDamage.Expressions.ListExp;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
-import com.ModDamage.Routines.Routines;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
+import com.ModDamage.Routines.RoutineList;
+import com.ModDamage.Routines.Expressions.ListExpression;
 
 @SuppressWarnings("rawtypes")
 public class Foreach extends NestedRoutine
 {
 	protected final IDataProvider<List> listDP;
 	protected final EventInfo myInfo;
-	protected final Routines routines = new Routines();
+	protected final RoutineList routines = new RoutineList();
 
 	private Foreach(ScriptLine scriptLine, IDataProvider<List> listDP, EventInfo myInfo)
 	{
@@ -57,11 +57,11 @@ public class Foreach extends NestedRoutine
 			IDataProvider<List> listDP = DataProvider.parse(info, List.class, matcher.group(1));
 			if (listDP == null) return null;
 
-			ListExp alistDP = (ListExp) listDP;
+			ListExpression alistDP = (ListExpression) listDP;
 
 			EventInfo myInfo = info.chain(new SimpleEventInfo(alistDP.providesElement(), name));
 
-			LogUtil.info("Foreach " + listDP + " as " + name);
+			ModDamageLogger.info("Foreach " + listDP + " as " + name);
 
 			Foreach routine = new Foreach(scriptLine, listDP, myInfo);
 			return new NestedRoutineBuilder(routine, routine.routines, myInfo);

@@ -5,14 +5,14 @@ import java.util.regex.Pattern;
 
 import org.bukkit.entity.Player;
 
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataParser;
-import com.ModDamage.Parsing.IDataProvider;
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.StringMatcher;
-import com.ModDamage.Conditionals.Conditional;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataParser;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Routines.Conditionals.Conditional;
 import com.gmail.nossr50.api.AbilityAPI;
 
 public class AbilityConditional extends Conditional<Player>
@@ -108,7 +108,7 @@ public class AbilityConditional extends Conditional<Player>
 							mcMMOability = ability;
 					if(mcMMOability == null)
 					{
-						LogUtil.error("Invalid McMMO ability \"" + m.group(3) + "\"");
+						ModDamageLogger.error("Invalid McMMO ability \"" + m.group(3) + "\"");
 						return null;
 					}
 					

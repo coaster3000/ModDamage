@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-import com.ModDamage.ModDamage;
+import com.ModDamage.TagManager;
 
 public class WorldTags<T> implements ITags<T, World> {
     private final Map<World, Map<String, T>> tags = new HashMap<World, Map<String, T>>();
@@ -20,7 +20,7 @@ public class WorldTags<T> implements ITags<T, World> {
     public WorldTags() { }
 
     public void addTag(World world, String tag, T tagValue) {
-        ModDamage.getTagger().dirty(); // only need to save when dirty
+        TagManager.getInstance().setDirtyState(); // only need to save when dirty
         Map<String, T> tags = this.tags.get(world);
         if (tags == null) {
             tags = new HashMap<String, T>();

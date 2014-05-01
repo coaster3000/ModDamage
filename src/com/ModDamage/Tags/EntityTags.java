@@ -12,7 +12,7 @@ import java.util.WeakHashMap;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 
-import com.ModDamage.ModDamage;
+import com.ModDamage.TagManager;
 
 public class EntityTags<T> implements ITags<T, Entity> {
     private final Map<String, Map<Entity, T>> tags = new HashMap<String, Map<Entity, T>>();
@@ -27,7 +27,7 @@ public class EntityTags<T> implements ITags<T, Entity> {
             tagsHolder.onPlayer.addTag((OfflinePlayer) entity, tag, tagValue);
             return;
         }
-        ModDamage.getTagger().dirty(); // only need to save when dirty
+        TagManager.getInstance().setDirtyState(); // only need to save when dirty
         Map<Entity, T> tags = this.tags.get(tag);
         if (tags == null) {
             tags = new WeakHashMap<Entity, T>();

@@ -1,13 +1,18 @@
 package com.ModDamage.Tags;
 
-import com.ModDamage.ModDamage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 
-import java.util.*;
-import java.util.Map.Entry;
+import com.ModDamage.TagManager;
 
 public class PlayerTags<T> implements ITags<T, OfflinePlayer> {
     private final Map<String, Map<String, T>> tags = new HashMap<String, Map<String, T>>();
@@ -15,7 +20,7 @@ public class PlayerTags<T> implements ITags<T, OfflinePlayer> {
     public PlayerTags() { }
 
     public void addTag(OfflinePlayer player, String tag, T tagValue) {
-        ModDamage.getTagger().dirty(); // only need to save when dirty
+        TagManager.getInstance().setDirtyState(); // only need to save when dirty
         Map<String, T> tags = this.tags.get(tag);
         if (tags == null) {
             tags = new HashMap<String, T>();
