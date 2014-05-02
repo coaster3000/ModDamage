@@ -18,7 +18,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.yaml.snakeyaml.Yaml;
 
-import com.ModDamage.ModDamagePluginConfiguration.LoadState;
+import com.ModDamage.ModDamageConfigurationHandler.LoadState;
 import com.ModDamage.Tags.TagsHolder;
 
 public class TagManager
@@ -80,7 +80,11 @@ public class TagManager
 		oldFile = new File(file.getParent(), file.getName()+".old");
 	}
 	
-	void enable()
+	/**
+	 * Enables the TagManager async task.
+	 * @return True if already running.
+	 */
+	public boolean enable()
 	{		
 		if(!initialized)
 		{
@@ -93,7 +97,7 @@ public class TagManager
 			}, saveInterval, saveInterval);
 			initialized = true;
 		}
-		else throw new IllegalStateException("Attempted to enable already-enabled tag manager");
+		return initialized;
 	}
 	
 	private boolean isDirty = false;
@@ -201,7 +205,6 @@ public class TagManager
 				initialized = false;
 			}
 		}
-		else throw new IllegalStateException("Attempted to disable already-disabled tag manager");
 	}
 	
 	/**

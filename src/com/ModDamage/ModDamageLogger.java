@@ -92,7 +92,7 @@ public class ModDamageLogger {
 					name = mdPlugin.getName();
 				
 				String pat = "\\[" + name + "\\] ";
-				b.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).append(ModDamagePluginConfiguration.newline).toString(); //StringBuilder is much more effecient then string concat.
+				b.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).append(ModDamageConfigurationHandler.newline).toString(); //StringBuilder is much more effecient then string concat.
 				return b.toString();
 			}
 		};

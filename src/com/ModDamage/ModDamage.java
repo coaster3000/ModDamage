@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.ModDamage.ModDamageLogger.DebugSetting;
 import com.ModDamage.ModDamageLogger.OutputPreset;
-import com.ModDamage.ModDamagePluginConfiguration.LoadState;
+import com.ModDamage.ModDamageConfigurationHandler.LoadState;
 import com.ModDamage.Backend.BailException;
 import com.ModDamage.Backend.Configuration.ScriptLine;
 import com.ModDamage.Backend.Minecraft.Events.Command;
@@ -43,7 +43,7 @@ public class ModDamage extends JavaPlugin implements ModDamageExtension
 		return instance;
 	}
 	public ModDamage() { instance = this; }
-	protected static ModDamagePluginConfiguration configuration;
+	protected static ModDamageConfigurationHandler configuration;
 
 	public static boolean isEnabled = false;
 	private static final String errorString_Permissions = chatPrepend(ChatColor.RED) + "You don't have access to that command.";
@@ -53,7 +53,7 @@ public class ModDamage extends JavaPlugin implements ModDamageExtension
 	@Override
 	public void onLoad() {
 		super.onLoad(); //Just in case bukkit loads stuff in here.
-		configuration = new ModDamagePluginConfiguration(); //Fixes NPE on registering extensions from onLoad in other plugins.
+		configuration = new ModDamageConfigurationHandler(); //Fixes NPE on registering extensions from onLoad in other plugins.
 	}
 
 	@Override

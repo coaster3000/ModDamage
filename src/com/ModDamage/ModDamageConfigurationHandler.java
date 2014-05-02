@@ -33,7 +33,7 @@ import com.ModDamage.External.ExtensionManager;
 import com.ModDamage.External.ExtensionManager.GroupsManager;
 import com.ModDamage.WebServer.MDServer;
 
-public class ModDamagePluginConfiguration implements ScriptLineHandler
+public class ModDamageConfigurationHandler implements ScriptLineHandler
 {
 	protected static final String configString_defaultConfigPath = "config.mdscript";
 
@@ -231,13 +231,13 @@ public class ModDamagePluginConfiguration implements ScriptLineHandler
 	@Override
 	public void done()
 	{
-		
+		//TODO Something?
 	}
 	
 	public boolean reload(boolean reloadingAll)
 	{
-		StopWatch sw = new StopWatch();
-		sw.start(TM_MAINLOAD);
+		StopWatch stopwatch = new StopWatch();
+		stopwatch.start(TM_MAINLOAD);
 		LoadState.pluginState = LoadState.NOT_LOADED;
 		ModDamageLogger.getInstance().resetLogCount();
 		ModDamageLogger.getInstance().resetWorstLogMessageLevel();
@@ -251,7 +251,7 @@ public class ModDamagePluginConfiguration implements ScriptLineHandler
 
 		if(reloadingAll)
 		{
-			sw.start(TM_EXT_PL_MAN);
+			stopwatch.start(TM_EXT_PL_MAN);
 			MDEvent.registerVanillaEvents();
 			ExtensionManager.reload();
 			if(ExtensionManager.getGroupsManager() == GroupsManager.None)
@@ -269,11 +269,11 @@ public class ModDamagePluginConfiguration implements ScriptLineHandler
 			else
 				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, "mcMMO: Using version " + ExtensionManager.getMcMMOPlugin().getDescription().getVersion());
 			
-			sw.stop(TM_EXT_PL_MAN);
+			stopwatch.stop(TM_EXT_PL_MAN);
 		}
 
 		
-		sw.start(TM_SCRIPTLOAD);
+		stopwatch.start(TM_SCRIPTLOAD);
 		FileInputStream stream = null;
 		try
 		{
@@ -295,11 +295,11 @@ public class ModDamagePluginConfiguration implements ScriptLineHandler
 				catch (IOException e) { }
 			}
 		}
-		sw.stop(TM_SCRIPTLOAD);
+		stopwatch.stop(TM_SCRIPTLOAD);
 		
-		sw.start(TM_MDEvent);
+		stopwatch.start(TM_MDEvent);
 		MDEvent.registerEvents();
-		sw.stop(TM_MDEvent);
+		stopwatch.stop(TM_MDEvent);
 		
 		boolean loggingEnabled = false;
 			if (logFile != null)
@@ -350,16 +350,16 @@ public class ModDamagePluginConfiguration implements ScriptLineHandler
 		
 		LoadState.pluginState = LoadState.combineStates(MDEvent.getCombinedLoadState(), AliasManager.getState());
 		
-		double time = sw.stop(TM_MAINLOAD);
+		double time = stopwatch.stop(TM_MAINLOAD);
 		String timer = "(" + time + " \u00b5s) ";
 		
 		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Timings:");
 		
 		ModDamageLogger.getInstance().changeIndentation(true);
 		
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Event Loading: " + (sw.time(TM_MDEvent)/1000) + " \u00b5s) ");
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "External Event Manager: "+ (sw.time(TM_EXT_PL_MAN)/1000) + " \u00b5s");
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Script Loading: " + (sw.time(TM_SCRIPTLOAD)/1000) + " \u00b5s) ");
+		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Event Loading: " + (stopwatch.time(TM_MDEvent)/1000) + " \u00b5s) ");
+		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "External Event Manager: "+ (stopwatch.time(TM_EXT_PL_MAN)/1000) + " \u00b5s");
+		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Script Loading: " + (stopwatch.time(TM_SCRIPTLOAD)/1000) + " \u00b5s) ");
 		
 		ModDamageLogger.getInstance().changeIndentation(false);
 		
@@ -444,6 +444,7 @@ public class ModDamagePluginConfiguration implements ScriptLineHandler
 		outputString += newline + "\t##ModDamageLogger.getInstance().setLogFile file = config.ModDamageLogger.getInstance().setLogFile";
 		outputString += newline + "\t##append logs = yes";
 		
+		//TODO Can this work?
 //		outputString += newline + newline + "#Debug File Logging";
 //		outputString += newline + "#Uncomment the following to enable file logging";
 //		outputString += newline + "#Logging:";

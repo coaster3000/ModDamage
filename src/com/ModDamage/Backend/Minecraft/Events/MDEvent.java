@@ -13,7 +13,7 @@ import org.bukkit.event.Listener;
 
 import com.ModDamage.ModDamage;
 import com.ModDamage.ModDamageLogger;
-import com.ModDamage.ModDamagePluginConfiguration.LoadState;
+import com.ModDamage.ModDamageConfigurationHandler.LoadState;
 import com.ModDamage.Backend.BailException;
 import com.ModDamage.Backend.Configuration.ScriptLineHandler;
 import com.ModDamage.Backend.Minecraft.Events.Block.BlockBurn;

@@ -89,7 +89,7 @@ abstract public class Routine
 		EntityHeal.register();
 		SetProperty.register();
 		
-		NestedRoutine.registerVanillaRoutines();
+		NestedRoutine.registerVanillaRoutineList();
 	}
 
 	protected static void registerRoutine(Pattern pattern, RoutineFactory factory)

@@ -125,7 +125,7 @@ public abstract class Taggable<T> {
         getTags(tag.getHolder(TagManager.getInstance())).addTag(obj, tag.getName(data), value);
     }
 
-    public boolean has(Tag<?> tag, T obj, EventData data) throws BailException {
+    public boolean has(Tag tag, T obj, EventData data) throws BailException {
     	if (obj == null) return false;
         return getTags(tag.getHolder(TagManager.getInstance())).isTagged(obj, tag.getName(data));
     }

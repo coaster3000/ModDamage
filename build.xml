@@ -10,7 +10,7 @@
 
 	<target name="build" description="compile the source" depends="clean-web">
 		<mkdir dir="bin"/>
-		<javac srcdir="src" destdir="bin" includeantruntime="false" encoding="UTF-8">
+		<javac srcdir="src" destdir="bin" includeantruntime="false" encoding="UTF-8" debug="true" debuglevel="lines, vars, and source">
 			<compilerarg value="-Xlint"/>
 			<classpath>
 				<fileset dir="resource">
