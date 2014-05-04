@@ -1,5 +1,6 @@
 package com.ModDamage.Routines.Nested;
 
+import com.ModDamage.ModDamage;
 import com.ModDamage.ModDamageLogger;
 import com.ModDamage.ModDamageLogger.OutputPreset;
 import com.ModDamage.Backend.Configuration.ScriptLine;
@@ -60,7 +61,7 @@ public abstract class NestedRoutine extends Routine
 	public static void paddedLogRecord(OutputPreset preset, String message)
 	{		
 		ModDamageLogger.console_only("");
-		ModDamageLogger.getInstance().addToLogRecord(preset, message);///XXX Hack! Change to static
+		ModDamage.getConfiguration().getLog().addToLogRecord(preset, message);
 		ModDamageLogger.console_only("");
 	}
 }

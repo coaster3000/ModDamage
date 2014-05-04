@@ -22,6 +22,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 import ru.tehkode.permissions.PermissionManager;
 
+import com.ModDamage.ModDamage;
 import com.ModDamage.ModDamage.ModDamageExtension;
 import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
@@ -74,7 +75,7 @@ public class ExtensionManager
 
 	private static void reloadPluginExtensions()
 	{
-		String prefix = ModDamageLogger.getInstance().logPrepend();
+		String prefix = ModDamage.getConfiguration().getLog().logPrepend();
 		if (registeredPlugins.isEmpty())
 		{
 			ModDamageLogger.info_verbose(prefix + "Extensions: No extensions found.");

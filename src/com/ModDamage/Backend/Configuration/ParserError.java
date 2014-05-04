@@ -1,4 +1,4 @@
-package com.ModDamage.Backend;
+package com.ModDamage.Backend.Configuration;
 
 public class ParserError extends Error
 {

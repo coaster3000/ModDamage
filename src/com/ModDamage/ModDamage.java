@@ -85,7 +85,7 @@ public class ModDamage extends JavaPlugin implements ModDamageExtension
 		
 		TagManager.getInstance().disable();
 		isEnabled = false;
-		ModDamageLogger.getInstance().setLogFile(null); //Cleanup locks.
+		configuration.getLog().setLogFile(null); //Cleanup locks.
 		ModDamageLogger.info("Disabled.");
 		PluginCommand.setPlugin(null); //Prevents possible memory leaks on /reload command
 	}
@@ -143,13 +143,13 @@ public class ModDamage extends JavaPlugin implements ModDamageExtension
 			protected void handleCommand(Player player, Matcher matcher)
 			{
 				boolean reloadingAll = matcher.group(1) != null;
-				if(player != null) ModDamageLogger.printToLog(Level.INFO, "Reload initiated by user " + player.getName() + "...");
+				if(player != null) configuration.getLog().printToLog(Level.INFO, "Reload initiated by user " + player.getName() + "...");
 				plugin.reload(reloadingAll);
 				if(player != null)
 					switch(LoadState.pluginState)
 					{
 						case SUCCESS:
-							int worstValue = ModDamageLogger.getInstance().getWorstLogMessageLevel().intValue();
+							int worstValue = configuration.getLog().getWorstLogMessageLevel().intValue();
 							
 							if (worstValue >= Level.SEVERE.intValue()) {
 								player.sendMessage(chatPrepend(ChatColor.YELLOW) + "Reloaded with errors.");
@@ -161,7 +161,7 @@ public class ModDamage extends JavaPlugin implements ModDamageExtension
 								player.sendMessage(chatPrepend(ChatColor.GREEN) + "Reloaded!");
 							}
 							else {
-								player.sendMessage(chatPrepend(ChatColor.YELLOW) + "Weird reload: " + ModDamageLogger.getInstance().getWorstLogMessageLevel());
+								player.sendMessage(chatPrepend(ChatColor.YELLOW) + "Weird reload: " + configuration.getLog().getWorstLogMessageLevel());
 							}
 							
 							break;
@@ -281,22 +281,22 @@ public class ModDamage extends JavaPlugin implements ModDamageExtension
 			StringBuffer sb = new StringBuffer().append("ModDamage commands:\n").append("/moddamage | /md - bring up this help message");
 			for (PluginCommand cmd:PluginCommand.values())
 				sb.append("\n").append(cmd.help);
-			if(forError) ModDamageLogger.printToLog(Level.SEVERE, "Error: invalid command syntax.");
-			ModDamageLogger.printToLog(Level.INFO, sb.toString());
+			if(forError) configuration.getLog().printToLog(Level.SEVERE, "Error: invalid command syntax.");
+			configuration.getLog().printToLog(Level.INFO, sb.toString());
 		}
 	}
 
 ///////////////// HELPER FUNCTIONS
-	public static void addToLogRecord(OutputPreset preset, String message){ ModDamageLogger.getInstance().addToLogRecord(preset, message); }
-	public static void addToLogRecord(OutputPreset preset, ScriptLine line, String message){ ModDamageLogger.getInstance().addToLogRecord(preset, line, message); }
+	public static void addToLogRecord(OutputPreset preset, String message){ configuration.getLog().addToLogRecord(preset, message); }
+	public static void addToLogRecord(OutputPreset preset, ScriptLine line, String message){ configuration.getLog().addToLogRecord(preset, line, message); }
 	
 	public static void changeIndentation(boolean forward)
 	{
-		ModDamageLogger.getInstance().changeIndentation(forward);
+		configuration.getLog().changeIndentation(forward);
 	}
 	
 	public static void printToLog(Level level, String message) {
-		ModDamageLogger.printToLog(level, message);
+		configuration.getLog().printToLog(level, message);
 	}
 
 	public static final HashSet<Material> goThroughThese = new HashSet<Material>(Arrays.asList(
@@ -332,6 +332,10 @@ public class ModDamage extends JavaPlugin implements ModDamageExtension
 			System.err.println("A serious error has occurred in ModDamage:\n"+bailException.toString());
 			System.err.println("Please report this error.");
 		}
+	}
+	
+	public static ModDamageConfigurationHandler getConfiguration() {
+		return configuration;
 	}
 
 }
