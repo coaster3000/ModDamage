@@ -32,6 +32,7 @@ import com.ModDamage.Expressions.NumberExp;
 import com.ModDamage.Expressions.StringExp;
 import com.ModDamage.Expressions.Function.NewVectorFunction;
 import com.ModDamage.External.TabAPI.TabAPISupport;
+import com.ModDamage.External.Towny.TownySupport;
 import com.ModDamage.External.Vault.VaultSupport;
 import com.ModDamage.External.Votifier.Vote;
 import com.ModDamage.Magic.MagicStuff;
@@ -157,6 +158,8 @@ public class ExternalPluginManager
 		catch (NoClassDefFoundError e) {
 			LogUtil.info("TabAPI not found: "+e.getMessage());
 			}
+		
+		TownySupport.register();
 		
 		reloadPluginExtensions();
 		
