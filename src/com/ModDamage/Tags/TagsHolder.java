@@ -1,12 +1,15 @@
 package com.ModDamage.Tags;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-
-import java.util.*;
 
 public final class TagsHolder<T>
 {

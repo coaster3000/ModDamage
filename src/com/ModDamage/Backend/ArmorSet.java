@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 
 public class ArmorSet 
 {
@@ -55,12 +55,12 @@ public class ArmorSet
 			if(!put(Material.matchMaterial(part), materials))
 			{
 				failFlag = true;
-				LogUtil.error("Unrecognized armor part \"" + part + "\"");
+				ModDamageLogger.error("Unrecognized armor part \"" + part + "\"");
 				break;
 			}
 		if(failFlag)
 		{
-			LogUtil.error("Invalid ArmorSet \"" + armorSetString + "\"");
+			ModDamageLogger.error("Invalid ArmorSet \"" + armorSetString + "\"");
 			return null;
 		}
 		else return new ArmorSet(materials);

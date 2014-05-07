@@ -1,3 +1,4 @@
+
 package com.ModDamage.Routines.Nested;
 
 import java.util.regex.Matcher;
@@ -5,14 +6,14 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 
-import com.ModDamage.LogUtil;
 import com.ModDamage.ModDamage;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 
 public class Delay extends NestedRoutine
 {	
@@ -30,7 +31,7 @@ public class Delay extends NestedRoutine
 		if (del == null) return;
 		
 		DelayedRunnable dr = new DelayedRunnable(data.clone());
-		Bukkit.getScheduler().scheduleSyncDelayedTask(ModDamage.getPluginConfiguration().plugin, dr, del);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(ModDamage.getInstance(), dr, del);
 	}
 		
 	public static void register(){ NestedRoutine.registerRoutine(delayPattern, new RoutineFactory()); }
@@ -43,7 +44,7 @@ public class Delay extends NestedRoutine
 
 			IDataProvider<Integer> numberMatch = DataProvider.parse(info, Integer.class, matcher.group(1));
 			
-			LogUtil.info("Delay: \"" + numberMatch + "\"");
+			ModDamageLogger.info("Delay: \"" + numberMatch + "\"");
 			if (numberMatch == null) return null;
 
 			Delay routine = new Delay(scriptLine, numberMatch);

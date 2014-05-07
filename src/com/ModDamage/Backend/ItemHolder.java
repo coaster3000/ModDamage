@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import com.ModDamage.Magic.MagicStuff;
+import com.ModDamage.Backend.Minecraft.Magic.MagicStuff;
 
 
 public class ItemHolder {

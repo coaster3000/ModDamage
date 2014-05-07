@@ -7,15 +7,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
-import com.ModDamage.Matchables.EntityType;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
+import com.ModDamage.Backend.Minecraft.Matchables.EntityType;
 
 public class Spawn extends NestedRoutine
 {
@@ -63,13 +63,13 @@ public class Spawn extends NestedRoutine
 			if (spawnType == null) return null;
 			if (!spawnType.canSpawn())
 			{
-				LogUtil.error("Cannot spawn "+matcher.group(2));
+				ModDamageLogger.error("Cannot spawn "+matcher.group(2));
 				return null;
 			}
 			IDataProvider<Location> locDP = DataProvider.parse(info, Location.class, matcher.group(1));
             if (locDP == null) return null;
 
-            LogUtil.info("Spawn "+spawnType+" at "+locDP);
+            ModDamageLogger.info("Spawn "+spawnType+" at "+locDP);
 
 			EventInfo einfo = info.chain(myInfo);
 

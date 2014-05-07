@@ -1,9 +1,10 @@
 package com.ModDamage.Tags;
 
 
+import com.ModDamage.TagManager;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
 
 public abstract class Tag<T> {
     private final IDataProvider<String> name;

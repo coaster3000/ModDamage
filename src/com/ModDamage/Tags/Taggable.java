@@ -7,13 +7,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-import com.ModDamage.LogUtil;
-import com.ModDamage.ModDamage;
+import com.ModDamage.ModDamageLogger;
+import com.ModDamage.TagManager;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 
 public abstract class Taggable<T> {
     public final IDataProvider<T> inner;
@@ -86,53 +86,53 @@ public abstract class Taggable<T> {
             }
         }
 
-        LogUtil.error(dp.provides().getSimpleName() + " is not a taggable type: "+dp);
+        ModDamageLogger.error(dp.provides().getSimpleName() + " is not a taggable type: "+dp);
         return null;
     }
     
     public <D> D get(Tag<D> tag, EventData data) throws BailException {
     	T innerval = inner.get(data);
     	if (innerval == null) return null;
-        return getTags(tag.getHolder(ModDamage.getTagger())).getTagValue(innerval, tag.getName(data));
+        return getTags(tag.getHolder(TagManager.getInstance())).getTagValue(innerval, tag.getName(data));
     }
 
     public <D> void set(Tag<D> tag, EventData data, D value) throws BailException {
     	T innerval = inner.get(data);
     	if (innerval == null) return;
-        getTags(tag.getHolder(ModDamage.getTagger())).addTag(inner.get(data), tag.getName(data), value);
+        getTags(tag.getHolder(TagManager.getInstance())).addTag(inner.get(data), tag.getName(data), value);
     }
 
     public boolean has(Tag<?> tag, EventData data) throws BailException {
     	T innerval = inner.get(data);
     	if (innerval == null) return false;
-        return getTags(tag.getHolder(ModDamage.getTagger())).isTagged(inner.get(data), tag.getName(data));
+        return getTags(tag.getHolder(TagManager.getInstance())).isTagged(inner.get(data), tag.getName(data));
     }
 
     public void remove(Tag<?> tag, EventData data) throws BailException {
     	T innerval = inner.get(data);
     	if (innerval == null) return;
-        getTags(tag.getHolder(ModDamage.getTagger())).removeTag(inner.get(data), tag.getName(data));
+        getTags(tag.getHolder(TagManager.getInstance())).removeTag(inner.get(data), tag.getName(data));
     }
 
     // Avoid double getting inner in some cases
     public <D> D get(Tag<D> tag, T obj, EventData data) throws BailException {
     	if (obj == null) return null;
-        return getTags(tag.getHolder(ModDamage.getTagger())).getTagValue(obj, tag.getName(data));
+        return getTags(tag.getHolder(TagManager.getInstance())).getTagValue(obj, tag.getName(data));
     }
 
     public <D> void set(Tag<D> tag, T obj, EventData data, D value) throws BailException {
     	if (obj == null) return;
-        getTags(tag.getHolder(ModDamage.getTagger())).addTag(obj, tag.getName(data), value);
+        getTags(tag.getHolder(TagManager.getInstance())).addTag(obj, tag.getName(data), value);
     }
 
-    public boolean has(Tag<?> tag, T obj, EventData data) throws BailException {
+    public boolean has(Tag tag, T obj, EventData data) throws BailException {
     	if (obj == null) return false;
-        return getTags(tag.getHolder(ModDamage.getTagger())).isTagged(obj, tag.getName(data));
+        return getTags(tag.getHolder(TagManager.getInstance())).isTagged(obj, tag.getName(data));
     }
 
     public void remove(Tag<?> tag, T obj, EventData data) throws BailException {
     	if (obj == null) return;
-        getTags(tag.getHolder(ModDamage.getTagger())).removeTag(obj, tag.getName(data));
+        getTags(tag.getHolder(TagManager.getInstance())).removeTag(obj, tag.getName(data));
     }
 
     protected abstract <D> ITags<D, T> getTags(TagsHolder<D> holder);

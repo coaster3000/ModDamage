@@ -3,18 +3,18 @@ package com.ModDamage.Routines.Nested;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.StringMatcher;
 import com.ModDamage.Utils;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
-import com.ModDamage.Expressions.LiteralNumber;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
-import com.ModDamage.Routines.Routines;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
+import com.ModDamage.Routines.RoutineList;
+import com.ModDamage.Routines.Expressions.LiteralNumber;
 
 public class For extends NestedRoutine
 {
@@ -22,7 +22,7 @@ public class For extends NestedRoutine
 	protected final IDataProvider<Number> toDP;
 	protected final IDataProvider<Number> byDP;
 	protected final EventInfo myInfo;
-	protected final Routines routines = new Routines();
+	protected final RoutineList routines = new RoutineList();
 
 	private For(ScriptLine scriptLine, IDataProvider<Number> fromDP, IDataProvider<Number> toDP, IDataProvider<Number> byDP, EventInfo myInfo)
 	{
@@ -113,7 +113,7 @@ public class For extends NestedRoutine
 
 			EventInfo myInfo = info.chain(new SimpleEventInfo(Number.class, name));
 
-			LogUtil.info("For " + name + " from " + fromDP + " to " + toDP + " by " + byDP);
+			ModDamageLogger.info("For " + name + " from " + fromDP + " to " + toDP + " by " + byDP);
 
 			For routine = new For(scriptLine, fromDP, toDP, byDP, myInfo);
 			return new NestedRoutineBuilder(routine, routine.routines, myInfo);

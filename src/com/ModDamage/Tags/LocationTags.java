@@ -14,7 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.BlockVector;
 
-import com.ModDamage.ModDamage;
+import com.ModDamage.TagManager;
 
 public class LocationTags<T> implements ITags<T, Location> {
 
@@ -51,7 +51,7 @@ public class LocationTags<T> implements ITags<T, Location> {
      * Tag the thing. A new tag is made if it doesn't already exist.
      */
     public void addTag(Location loc, String tag, T tagValue) {
-        ModDamage.getTagger().dirty(); // only need to save when dirty
+        TagManager.getInstance().setDirtyState(); // only need to save when dirty
         getWorldTags(tag, loc.getWorld().getName(), true).put(toBlockVector(loc), tagValue);
     }
 

@@ -6,13 +6,31 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
 import com.ModDamage.Backend.NonNull;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Backend.ScriptLineHandler;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.ScriptLineHandler;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Routines.Base.AddPotionEffect;
+import com.ModDamage.Routines.Base.AliasedRoutine;
+import com.ModDamage.Routines.Base.Cancel;
+import com.ModDamage.Routines.Base.ClearEnchantments;
+import com.ModDamage.Routines.Base.ClearList;
+import com.ModDamage.Routines.Base.Despawn;
+import com.ModDamage.Routines.Base.EntityHeal;
+import com.ModDamage.Routines.Base.EntityHurt;
+import com.ModDamage.Routines.Base.EntityUnknownHurt;
+import com.ModDamage.Routines.Base.Lightning;
+import com.ModDamage.Routines.Base.PlayEffect;
+import com.ModDamage.Routines.Base.PlayEntityEffect;
+import com.ModDamage.Routines.Base.PlaySound;
+import com.ModDamage.Routines.Base.RemovePotionEffect;
+import com.ModDamage.Routines.Base.RepeatControl;
+import com.ModDamage.Routines.Base.SetProperty;
+import com.ModDamage.Routines.Base.Teleport;
+import com.ModDamage.Routines.Base.Untag;
 import com.ModDamage.Routines.Nested.Command;
 import com.ModDamage.Routines.Nested.DropItem;
 import com.ModDamage.Routines.Nested.EntityItemAction;
@@ -71,7 +89,7 @@ abstract public class Routine
 		EntityHeal.register();
 		SetProperty.register();
 		
-		NestedRoutine.registerVanillaRoutines();
+		NestedRoutine.registerVanillaRoutineList();
 	}
 
 	protected static void registerRoutine(Pattern pattern, RoutineFactory factory)
@@ -91,7 +109,7 @@ abstract public class Routine
 					return builder;
 			}
 		}
-		LogUtil.error(" No match found for routine \"" + line.line + "\"");
+		ModDamageLogger.error(" No match found for routine \"" + line.line + "\"");
 		return null;
 	}
 
@@ -106,7 +124,7 @@ abstract public class Routine
 		public Routine buildRoutine();
 	}
 	
-	protected static class RoutineBuilder implements IRoutineBuilder
+	public static class RoutineBuilder implements IRoutineBuilder
 	{
 		Routine routine;
 		public RoutineBuilder(Routine routine) {

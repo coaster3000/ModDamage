@@ -6,15 +6,15 @@ import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
 import org.mcsg.double0negative.tabapi.TabAPI;
 
-import com.ModDamage.LogUtil;
 import com.ModDamage.ModDamage;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.StringMatcher;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
 
 public class SetTabString extends Routine 
@@ -48,9 +48,9 @@ public class SetTabString extends Routine
 		String str = string.get(data); if (str == null) return;
 		
 		if (ping == null)
-			TabAPI.setTabString(ModDamage.getPluginConfiguration().plugin, player, x, y, str);
+			TabAPI.setTabString(ModDamage.getInstance(), player, x, y, str);
 		else
-			TabAPI.setTabString(ModDamage.getPluginConfiguration().plugin, player, x, y, str, ping);
+			TabAPI.setTabString(ModDamage.getInstance(), player, x, y, str, ping);
 	}
 	
 	public static void registerNested()
@@ -86,7 +86,7 @@ public class SetTabString extends Routine
 			IDataProvider<String> istr = DataProvider.parse(info, String.class, m.group(3));
 			
 
-			LogUtil.info("SetTabString: " + playerDP + " " + xDP + ", " + yDP + (pingDP == null? "" : (", " + pingDP)) + ": " + istr);
+			ModDamageLogger.info("SetTabString: " + playerDP + " " + xDP + ", " + yDP + (pingDP == null? "" : (", " + pingDP)) + ": " + istr);
 			
 			return new RoutineBuilder(new SetTabString(scriptLine, playerDP, xDP, yDP, pingDP, istr));
 		}

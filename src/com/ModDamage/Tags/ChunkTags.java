@@ -13,7 +13,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-import com.ModDamage.ModDamage;
+import com.ModDamage.TagManager;
 
 public class ChunkTags<T> implements ITags<T, Chunk> {
     private final Map<World, Map<String, Map<String, T>>> tags = new HashMap<World, Map<String, Map<String,T>>>();
@@ -55,7 +55,7 @@ public class ChunkTags<T> implements ITags<T, Chunk> {
     }
 
     public void addTag(Chunk chunk, String tag, T tagValue) {
-        ModDamage.getTagger().dirty(); // only need to save when dirty
+        TagManager.getInstance().setDirtyState(); // only need to save when dirty
         Map<String, T> tags = getChunkTags(chunk, true);
         tags.put(tag, tagValue);
     }

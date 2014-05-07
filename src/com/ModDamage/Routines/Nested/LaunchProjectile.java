@@ -9,16 +9,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
-import com.ModDamage.LogUtil;
-import com.ModDamage.MDLogger.OutputPreset;
+import com.ModDamage.ModDamageLogger;
+import com.ModDamage.ModDamageLogger.OutputPreset;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
-import com.ModDamage.Matchables.EntityType;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
+import com.ModDamage.Backend.Minecraft.Matchables.EntityType;
 
 public class LaunchProjectile extends NestedRoutine
 {
@@ -139,13 +139,13 @@ public class LaunchProjectile extends NestedRoutine
 			if (launchType == null) return null;
 			if (!Projectile.class.isAssignableFrom(launchType.myClass) || launchType == EntityType.POTION)
 			{
-				LogUtil.error("Not a launchable projectile: "+matcher.group(2));
+				ModDamageLogger.error("Not a launchable projectile: "+matcher.group(2));
 				return null;
 			}
 			
 			if (matcher.group(1) == null && matcher.group(3) == null)
 			{
-				LogUtil.error("Either a shooter or a launch location must be specified!");
+				ModDamageLogger.error("Either a shooter or a launch location must be specified!");
 				return null;
 			}
 			

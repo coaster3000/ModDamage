@@ -10,16 +10,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 
-import com.ModDamage.LogUtil;
 import com.ModDamage.ModDamage;
-import com.ModDamage.Alias.CommandAliaser;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Backend.ScriptLineHandler;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.ScriptLineHandler;
+import com.ModDamage.Backend.Configuration.Alias.CommandAliaser;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
 
 public class Command extends NestedRoutine 
@@ -104,25 +104,25 @@ public class Command extends NestedRoutine
 			CommandTarget commandTarget = CommandTarget.match(matcher.group(1), info);
 			if(commandTarget == null)
 			{
-				LogUtil.error("Bad command target: "+matcher.group(1));
+				ModDamageLogger.error("Bad command target: "+matcher.group(1));
 				return null;
 			}
 			
 			Collection<IDataProvider<String>> commands = CommandAliaser.match(matcher.group(2), info);
 			if (commands == null)
 			{
-				LogUtil.error("This command form can only be used for command aliases. Please use the following instead.");
-				LogUtil.error("    - 'command."+matcher.group(1)+"': '" + matcher.group(2) + "'");
+				ModDamageLogger.error("This command form can only be used for command aliases. Please use the following instead.");
+				ModDamageLogger.error("    - 'command."+matcher.group(1)+"': '" + matcher.group(2) + "'");
 				return null;
 			}
 			
 			
 			Command routine = new Command(scriptLine, commandTarget, commands);
-			LogUtil.info("Command (" + commandTarget + "):" );
+			ModDamageLogger.info("Command (" + commandTarget + "):" );
 			ModDamage.changeIndentation(true);
 			for (IDataProvider<String> cmd : commands)
 			{
-				LogUtil.info(cmd.toString());
+				ModDamageLogger.info(cmd.toString());
 			}
 			ModDamage.changeIndentation(false);
 			return new RoutineBuilder(routine);
@@ -138,7 +138,7 @@ public class Command extends NestedRoutine
 			if(commandTarget == null) return null;
 			
 
-			LogUtil.info("Command (" + commandTarget + "):" );
+			ModDamageLogger.info("Command (" + commandTarget + "):" );
 			ModDamage.changeIndentation(true);
 			
 			CommandRoutineBuilder builder = new CommandRoutineBuilder(scriptLine, commandTarget, info);
@@ -170,7 +170,7 @@ public class Command extends NestedRoutine
 			IDataProvider<String> cmdDP = DataProvider.parse(info, String.class, str);
 			if (cmdDP != null) {
 				commands.add(cmdDP);
-				LogUtil.info(cmdDP.toString());
+				ModDamageLogger.info(cmdDP.toString());
 			}
 		}
 

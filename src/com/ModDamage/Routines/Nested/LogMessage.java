@@ -14,18 +14,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ModDamage.LogUtil;
 import com.ModDamage.ModDamage;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.StringMatcher;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Backend.ScriptLineHandler;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Expressions.InterpolatedString;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.ScriptLineHandler;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
+import com.ModDamage.Routines.Expressions.InterpolatedString;
 
 public class LogMessage extends NestedRoutine 
 {
@@ -47,7 +47,7 @@ public class LogMessage extends NestedRoutine
 		String logName = logNameDP.get(data);
 		if (logName == null) return;
 		
-		File logDir = new File(ModDamage.getPluginConfiguration().plugin.getDataFolder(), "logs");
+		File logDir = new File(ModDamage.getInstance().getDataFolder(), "logs");
 		if (!logDir.exists()) {
 			logDir.mkdirs();
 		}
@@ -90,7 +90,7 @@ public class LogMessage extends NestedRoutine
 			if (logNameDP == null) return null;
 
 			
-			LogUtil.info("Log (" + logNameDP + "):" );
+			ModDamageLogger.info("Log (" + logNameDP + "):" );
 			ModDamage.changeIndentation(true);
 			
 			MessageRoutineBuilder builder = new MessageRoutineBuilder(scriptLine, logNameDP, info);
@@ -124,7 +124,7 @@ public class LogMessage extends NestedRoutine
 			IDataProvider<String> msgDP = DataProvider.parse(info, String.class, str);
 			if (msgDP != null) {
 				messages.add(msgDP);
-				LogUtil.info(msgDP.toString());
+				ModDamageLogger.info(msgDP.toString());
 			}
 		}
 

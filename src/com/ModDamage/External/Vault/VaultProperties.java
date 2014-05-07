@@ -5,9 +5,9 @@ import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 
 import org.bukkit.entity.Player;
 
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.Parsing.Property.Properties;
-import com.ModDamage.Parsing.Property.Property;
+import com.ModDamage.Backend.Configuration.Parsing.Property.Properties;
+import com.ModDamage.Backend.Configuration.Parsing.Property.Property;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
 
 public class VaultProperties
 {

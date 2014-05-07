@@ -11,14 +11,14 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import com.ModDamage.LogUtil;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.StringMatcher;
-import com.ModDamage.Alias.MaterialAliaser;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Expressions.LiteralNumber;
+import com.ModDamage.Backend.Configuration.Alias.MaterialAliaser;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Routines.Expressions.LiteralNumber;
 
 public class ModDamageItemStack
 {
@@ -107,7 +107,7 @@ public class ModDamageItemStack
 			}
 			catch (IllegalArgumentException e)
 			{
-				LogUtil.error(e.getMessage());
+				ModDamageLogger.error(e.getMessage());
 			}
 		}
 		
@@ -129,13 +129,13 @@ public class ModDamageItemStack
 			
 		if (first == null)
 		{
-			LogUtil.error("Error: unable to match material \"" + m.group() + "\"");
+			ModDamageLogger.error("Error: unable to match material \"" + m.group() + "\"");
 			return null;
 		}
 		
 		if (materials == null || materials.size() > 1)
 		{
-			LogUtil.error("Error: matched "+(materials == null? 0:materials.size())+" materials, wanted only one: \"" + m.group() + "\"");
+			ModDamageLogger.error("Error: matched "+(materials == null? 0:materials.size())+" materials, wanted only one: \"" + m.group() + "\"");
 			return null;
 		}
 		

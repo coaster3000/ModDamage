@@ -6,11 +6,11 @@ import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
 
 import com.ModDamage.StringMatcher;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.External.Vault.VaultConditional.VaultConditionalParser;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
 
 public class VaultConditionals
 {

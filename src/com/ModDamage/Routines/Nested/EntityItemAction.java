@@ -7,19 +7,19 @@ import java.util.regex.Pattern;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 
-import com.ModDamage.LogUtil;
-import com.ModDamage.Alias.ItemAliaser;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ItemHolder;
-import com.ModDamage.Backend.ModDamageItemStack;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
-import com.ModDamage.Expressions.LiteralNumber;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Alias.ItemAliaser;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.ItemHolder;
+import com.ModDamage.Backend.Minecraft.ModDamageItemStack;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
 import com.ModDamage.Routines.Routine;
+import com.ModDamage.Routines.Expressions.LiteralNumber;
 
 public class EntityItemAction extends NestedRoutine
 {
@@ -133,7 +133,7 @@ public class EntityItemAction extends NestedRoutine
             if (quantity == null) return null;
 
 
-            LogUtil.info(action.charAt(0) + action.substring(1).toLowerCase() + " at/to " + humanDP + ": " + items);
+            ModDamageLogger.info(action.charAt(0) + action.substring(1).toLowerCase() + " at/to " + humanDP + ": " + items);
 			
 			EntityItemAction routine = new EntityItemAction(scriptLine, humanDP, ItemAction.valueOf(action), items, quantity);
 			return new NestedRoutineBuilder(routine, routine.routines, info.chain(myInfo));

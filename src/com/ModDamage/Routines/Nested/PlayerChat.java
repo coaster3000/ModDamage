@@ -7,17 +7,17 @@ import java.util.regex.Pattern;
 
 import org.bukkit.entity.Player;
 
-import com.ModDamage.LogUtil;
 import com.ModDamage.ModDamage;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.Backend.ScriptLineHandler;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Expressions.LiteralString;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.ScriptLineHandler;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
+import com.ModDamage.Routines.Expressions.LiteralString;
 
 public class PlayerChat extends Routine
 {
@@ -58,7 +58,7 @@ public class PlayerChat extends Routine
 			if(playerDP == null) return null;
 
 
-			LogUtil.info("Chat (" + playerDP + "):" );
+			ModDamageLogger.info("Chat (" + playerDP + "):" );
 			ModDamage.changeIndentation(true);
 			
 			ChatRoutineBuilder builder = new ChatRoutineBuilder(scriptLine, playerDP, info);
@@ -93,7 +93,7 @@ public class PlayerChat extends Routine
 					((LiteralString) msgDP).colorize();
 				}
 				messages.add(msgDP);
-				LogUtil.info(msgDP.toString());
+				ModDamageLogger.info(msgDP.toString());
 			}
 		}
 

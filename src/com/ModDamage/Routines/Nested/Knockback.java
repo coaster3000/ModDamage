@@ -7,14 +7,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.EventInfo.SimpleEventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.SimpleEventInfo;
 
 public class Knockback extends NestedRoutine
 {	
@@ -87,12 +87,12 @@ public class Knockback extends NestedRoutine
                     fromDP = DataProvider.transform(Location.class, otherEntityDP, info, false);
 				if (fromDP == null)
 				{
-					LogUtil.error("The entity '"+entityDP+"' doesn't have a natural opposite, so you need to specify one using '"+matcher.group()+".from.{entity}'");
+					ModDamageLogger.error("The entity '"+entityDP+"' doesn't have a natural opposite, so you need to specify one using '"+matcher.group()+".from.{entity}'");
 					return null;
 				}
 			}
 
-            LogUtil.info("KnockBack " + entityDP + " from " + fromDP);
+            ModDamageLogger.info("KnockBack " + entityDP + " from " + fromDP);
 
 			Knockback routine = new Knockback(scriptLine, entityDP, fromDP);
 			return new NestedRoutineBuilder(routine, routine.routines, info.chain(myInfo));

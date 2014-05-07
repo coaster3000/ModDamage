@@ -7,11 +7,11 @@ import org.bukkit.entity.Player;
 
 import com.ModDamage.Utils;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Nested.NestedRoutine;
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
@@ -100,7 +100,7 @@ public class ModifySkill extends NestedRoutine
 		}
 		catch (NoClassDefFoundError e) {
 //			if (ExternalPluginManager.getMcMMOPlugin() != null)
-//				LogUtil.error("McMMO has changed. Please notify the ModDamage developers.");
+//				ModDamageLogger.error("McMMO has changed. Please notify the ModDamage developers.");
 		}
 	}
 	

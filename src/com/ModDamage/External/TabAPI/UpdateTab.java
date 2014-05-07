@@ -6,13 +6,13 @@ import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
 import org.mcsg.double0negative.tabapi.TabAPI;
 
-import com.ModDamage.LogUtil;
+import com.ModDamage.ModDamageLogger;
 import com.ModDamage.Backend.BailException;
-import com.ModDamage.Backend.ScriptLine;
-import com.ModDamage.EventInfo.EventData;
-import com.ModDamage.EventInfo.EventInfo;
-import com.ModDamage.Parsing.DataProvider;
-import com.ModDamage.Parsing.IDataProvider;
+import com.ModDamage.Backend.Configuration.ScriptLine;
+import com.ModDamage.Backend.Configuration.Parsing.DataProvider;
+import com.ModDamage.Backend.Configuration.Parsing.IDataProvider;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventData;
+import com.ModDamage.Backend.Minecraft.Events.EventInfo.EventInfo;
 import com.ModDamage.Routines.Routine;
 import com.ModDamage.Routines.Nested.NestedRoutine;
 
@@ -47,7 +47,7 @@ public class UpdateTab extends NestedRoutine
 			IDataProvider<Player> playerDP = DataProvider.parse(info, Player.class, m.group(1));
 			if(playerDP == null) return null;
 			
-			LogUtil.info("UpdateTab: " + playerDP);
+			ModDamageLogger.info("UpdateTab: " + playerDP);
 			
 			return new RoutineBuilder(new UpdateTab(scriptLine, playerDP));
 		}
