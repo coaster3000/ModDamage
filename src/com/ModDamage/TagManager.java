@@ -178,7 +178,7 @@ public class TagManager
 				writer.close();
 			}
 			catch (IOException e){
-				ModDamageLogger.printToLog(Level.WARNING, "Error saving tags at " + newFile.getAbsolutePath() + "!");
+				ModDamage.printToLog(Level.WARNING, "Error saving tags at " + newFile.getAbsolutePath() + "!");
 				return;
 			}
 			

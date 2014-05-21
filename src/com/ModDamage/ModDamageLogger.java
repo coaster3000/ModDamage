@@ -9,19 +9,11 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 
 import com.ModDamage.Backend.Configuration.ScriptLine;
 
 public class ModDamageLogger {
-	
-	static private ModDamageLogger singletonInstance = null;
-	public static ModDamageLogger getInstance()
-	{
-		if(singletonInstance == null)
-			singletonInstance = new ModDamageLogger();
-		return singletonInstance;
-	}
-	
 	public static enum DebugSetting
 	{
 		QUIET, NORMAL, CONSOLE, VERBOSE;
@@ -54,16 +46,10 @@ public class ModDamageLogger {
 		}
 	}
 
+//	private BaseConfig config;
+	private Plugin plugin;
 	
 	public Level worstLogMessageLevel = Level.INFO;
-	
-	public Level getWorstLogMessageLevel() {
-		return worstLogMessageLevel;
-	}
-	
-	public void resetWorstLogMessageLevel() {
-		worstLogMessageLevel = Level.INFO;
-	}
 	
 	protected DebugSetting currentSetting = DebugSetting.VERBOSE;
 	
@@ -71,25 +57,26 @@ public class ModDamageLogger {
 	
 	private int indentation = 0;
 	
-	private final Logger logger;
-	private File logFile;
+	public final Logger log;
+	protected File logFile;
 	
 	public int logMessagesSoFar = 0;
 	public int maxLogMessagesToShow = 50;
 	
 	private Formatter formatter;
 	
-	public ModDamageLogger()
+	public ModDamageLogger(final ModDamageConfigurationHandler config)
 	{
-		final ModDamage mdPlugin = ModDamage.getInstance();
-		logger = mdPlugin.getLogger();
+//		this.config = config;
+		this.plugin = config.plugin;
+		log = plugin.getLogger();
 		formatter = new Formatter() {
 			@Override
 			public String format(LogRecord record) {
-				StringBuilder b = new StringBuilder().append('[').append(mdPlugin.getName()).append("] [").append(String.format("%1$-10s", record.getLevel().toString())).append("] ");
-				String name = mdPlugin.getDescription().getPrefix();
+				StringBuilder b = new StringBuilder().append('[').append(config.name()).append("] [").append(String.format("%1$-10s", record.getLevel().toString())).append("] ");
+				String name = plugin.getDescription().getPrefix();
 				if (name == null)
-					name = mdPlugin.getName();
+					name = plugin.getName();
 				
 				String pat = "\\[" + name + "\\] ";
 				b.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).append(ModDamageConfigurationHandler.newline).toString(); //StringBuilder is much more effecient then string concat.
@@ -105,6 +92,27 @@ public class ModDamageLogger {
 	
 	public void addToLogRecord(OutputPreset preset, String message)
 	{
+//		if(message.length() > 50)
+//		{
+//			configStrings_ingame.add(preset.color + "" +  indentation + "] " + message.substring(0, 49));
+//			configStrings_ingameFilters.add(preset);
+//			String ingameString = message.substring(49);
+//			while (ingameString.length() > 50)
+//			{
+//				configStrings_ingame.add("     " + preset.color + ingameString.substring(0, 49));
+//				configStrings_ingameFilters.add(preset);
+//				ingameString = ingameString.substring(49);
+//			}
+//			configStrings_ingame.add("     " + preset.color + ingameString);
+//			configStrings_ingameFilters.add(preset);
+//		}
+//		else
+//		{
+//			configStrings_ingame.add(preset.color + "" + indentation + "] " + message);
+//			configStrings_ingameFilters.add(preset);
+//		}
+//		configPages = configStrings_ingame.size() / 9 + (configStrings_ingame.size() % 9 > 0 ? 1 : 0);
+//
 		if (worstLogMessageLevel == null || preset.level.intValue() > worstLogMessageLevel.intValue())
 			worstLogMessageLevel = preset.level;
 
@@ -113,8 +121,10 @@ public class ModDamageLogger {
 				String nestIndentation = "";
 				for(int i = 0; i < indentation; i++)
 					nestIndentation += "    ";
+//				configStrings_console.add(nestIndentation + message);
+//				configStrings_consoleFilters.add(preset);
 				
-				logger.log(preset.level, nestIndentation + message);
+				log.log(preset.level, nestIndentation + message);
 			}
 			logMessagesSoFar ++;
 		}
@@ -135,7 +145,7 @@ public class ModDamageLogger {
 	}
 	
 	
-	public String logPrepend(){ return "[" + ModDamage.getInstance().getDescription().getName() + "] "; }
+	public String logPrepend(){ return "[" + plugin.getDescription().getName() + "] "; }
 	
 	public void setDebugSetting(DebugSetting level)
 	{
@@ -164,36 +174,46 @@ public class ModDamageLogger {
 		{
 			filehandle.flush();
 			filehandle.close();
-			logger.removeHandler(filehandle);
+			log.removeHandler(filehandle);
 		
 		}
 		if (path != null)
 		{	
 			filehandle = craftFileHandler(path, append);
 			if (filehandle != null)
-				logger.addHandler(filehandle);
+				log.addHandler(filehandle);
 		}
 	}
 	
+	public void printToLog(Level level, String message){ log.log(level, "[" + plugin.getDescription().getName() + "] " + message); }
 	
 	public void resetLogCount(){
 		logMessagesSoFar = 0;
 	}
-
-	public static void info(ScriptLine line, String message) { getInstance().addToLogRecord(OutputPreset.INFO, line, message); }
-	public static void info_verbose(ScriptLine line, String message) { getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, line, message); }
-	public static void warning(ScriptLine line, String message) { getInstance().addToLogRecord(OutputPreset.WARNING, line, message); }
-	public static void warning_strong(ScriptLine line, String message) { getInstance().addToLogRecord(OutputPreset.WARNING_STRONG, line, message); }
-	public static void error(ScriptLine line, String message) { getInstance().addToLogRecord(OutputPreset.FAILURE, line, message); }
-	public static void constant(ScriptLine line, String message) { getInstance().addToLogRecord(OutputPreset.CONSTANT, line, message); }
-	public static void console_only(ScriptLine line, String message) { getInstance().addToLogRecord(OutputPreset.CONSOLE_ONLY, line, message); }
 	
-	public static void info(String message) { getInstance().addToLogRecord(OutputPreset.INFO, message);	}
-	public static void info_verbose(String message) { getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, message); }
-	public static void warning(String message) { getInstance().addToLogRecord(OutputPreset.WARNING, message); }
-	public static void warning_strong(String message) { getInstance().addToLogRecord(OutputPreset.WARNING_STRONG, message); }
-	public static void error(String message) { getInstance().addToLogRecord(OutputPreset.FAILURE, message); }
-	public static void constant(String message) { getInstance().addToLogRecord(OutputPreset.CONSTANT, ""); }
-	public static void console_only(String message) { getInstance().addToLogRecord(OutputPreset.CONSOLE_ONLY, ""); }
-	public static void printToLog(Level level, String message){ getInstance().logger.log(level, "[" + ModDamage.getInstance().getDescription().getName() + "] " + message); }
+	public void resetWorstLogMessageLevel() {
+		worstLogMessageLevel = Level.INFO;
+	}
+	
+	//	Global Log Helpers
+	public static void info(ScriptLine line, String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.INFO, line, message); }
+	public static void info_verbose(ScriptLine line, String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, line, message); }
+	public static void warning(ScriptLine line, String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.WARNING, line, message); }
+	public static void warning_strong(ScriptLine line, String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.WARNING_STRONG, line, message); }
+	public static void error(ScriptLine line, String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.FAILURE, line, message); }
+	public static void constant(ScriptLine line, String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.CONSTANT, line, message); }
+	public static void console_only(ScriptLine line, String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.CONSOLE_ONLY, line, message); }
+	
+	public static void info(String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.INFO, message);	}
+	public static void info_verbose(String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, message); }
+	public static void warning(String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.WARNING, message); }
+	public static void warning_strong(String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.WARNING_STRONG, message); }
+	public static void error(String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.FAILURE, message); }
+	public static void constant(String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.CONSTANT, ""); }
+	public static void console_only(String message) { ModDamage.configuration.getLog().addToLogRecord(OutputPreset.CONSOLE_ONLY, ""); }
+//		public static void printToLog(Level level, String message) { ModDamage.printToLog(level, message); }
+
+	public Level getWorstLogMessageLevel() {
+		return worstLogMessageLevel;
+	}
 }

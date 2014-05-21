@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.ModDamage.ModDamageLogger.DebugSetting;
 import com.ModDamage.ModDamageLogger.OutputPreset;
@@ -45,8 +46,9 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 	private final File configFile = new File(ModDamage.getInstance().getDataFolder(), configString_defaultConfigPath);
 	public static final String newline = System.getProperty("line.separator");
 
+	
 	/*
-	 * Enum that reflects the plugin configuration load state. Helper members and functions are for ModDamageLogger.getInstance().setLogFile output and state merging,
+	 * Enum that reflects the plugin configuration load state. Helper members and functions are for log.setLogFile output and state merging,
 	 *   when combining reports from ModDamage's several modules.
 	 * Merging rules are simple: FAILURE overrides any SUCCESS, which overrides any NOT_LOADED states.
 	 */
@@ -80,8 +82,21 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 	String serverUsername;
 	String serverPassword;
 	
+	private ModDamageLogger log;
+	
 	boolean appendLog;
 	File logFile;
+	
+	public ModDamageConfigurationHandler() {
+		this(ModDamage.getInstance());
+	}
+	
+	public ModDamageConfigurationHandler(ModDamage instance) {
+		this.log = new ModDamageLogger(this);
+		this.plugin = instance;
+	}
+
+	protected Plugin plugin;
 	
 	public static final int DEFAULT_TAGSAVEINTERVAL = 200;
 	public static final int DEFAULT_SERVERPORT = 8765;
@@ -91,9 +106,9 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 	 */
 	private void resetDefaultSettings()
 	{
-		ModDamageLogger.getInstance().currentSetting = DebugSetting.NORMAL;
+		getLog().currentSetting = DebugSetting.NORMAL;
 		logFile = null;
-		ModDamageLogger.getInstance().setLogFile(logFile);
+		getLog().setLogFile(logFile);
 		
 		tags_save_interval = DEFAULT_TAGSAVEINTERVAL;
 		
@@ -112,25 +127,25 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 		{
 			Matcher m = settingPattern.matcher(line.line);
 			if (!m.matches()) {
-				ModDamageLogger.error("Invalid setting: \"" + line.line + "\"");
+				getLog().error("Invalid setting: \"" + line.line + "\"");
 				return null;
 			}
 			
 			String name = m.group(1).trim().toLowerCase().replaceAll("\\s+", "-");
 			String value = m.group(2).trim();
-			ModDamageLogger.info_verbose("setting: '" + name + "' = '"+value+"'");
+			getLog().info_verbose("setting: '" + name + "' = '"+value+"'");
 			
 			//Debug mode parsing
 			if (name.equals("debugging")) {
 				try {
-					ModDamageLogger.getInstance().currentSetting = DebugSetting.valueOf(value.toUpperCase());
+					getLog().currentSetting = DebugSetting.valueOf(value.toUpperCase());
 				}
 				catch (IllegalArgumentException e) {
-					ModDamageLogger.error("Bad debug level: " + value);
+					getLog().error("Bad debug level: " + value);
 				}
 			}
 			//Logfile settings
-			else if (name.equals("ModDamageLogger.getInstance().setLogFile-file")) {
+			else if (name.equals("log.setLogFile-file")) {
 				logFile = new File(ModDamage.getInstance().getDataFolder(), value);
 			}
 			else if (name.equals("append-logs")) {
@@ -155,7 +170,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 					tags_save_interval = Integer.parseInt(value);
 				}
 				catch (NumberFormatException e) {
-					ModDamageLogger.error("Bad tags save interval: " + value);
+					getLog().error("Bad tags save interval: " + value);
 				}
 			}
 			//Web server access configuration
@@ -167,7 +182,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 					serverPort = Integer.parseInt(value);
 				}
 				catch (NumberFormatException e) {
-					ModDamageLogger.error("Bad server port: " + value);
+					getLog().error("Bad server port: " + value);
 				}
 			}
 			else if (name.equals("server-username")) {
@@ -177,7 +192,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 				serverPassword = value;
 			}
 			else {
-				ModDamageLogger.error("Unknown setting: " + m.group(1));
+				getLog().error("Unknown setting: " + m.group(1));
 			}
 			
 			return null;
@@ -216,7 +231,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 				if (hasChildren) {
 					MDEvent e = MDEvent.getEvent(words[1]);
 					if (e == null) {
-						ModDamageLogger.warning(line, word0 + " " + words[1] + "is not valid. Possible that the event is not loaded!");
+						getLog().warning(line, word0 + " " + words[1] + "is not valid. Possible that the event is not loaded!");
 						return null;
 					}
 					
@@ -239,15 +254,15 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 		StopWatch stopwatch = new StopWatch();
 		stopwatch.start(TM_MAINLOAD);
 		LoadState.pluginState = LoadState.NOT_LOADED;
-		ModDamageLogger.getInstance().resetLogCount();
-		ModDamageLogger.getInstance().resetWorstLogMessageLevel();
+		getLog().resetLogCount();
+		getLog().resetWorstLogMessageLevel();
 		resetDefaultSettings();
 		Command.instance.reset();
 		Repeat.instance.reset();
 		MDEvent.unregisterEvents();
 		MDEvent.clearEvents();
 		
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, "[" + ModDamage.getInstance().getDescription().getName() + "] v" + ModDamage.getInstance().getDescription().getVersion() + " loading...");
+		getLog().addToLogRecord(OutputPreset.CONSTANT, "[" + ModDamage.getInstance().getDescription().getName() + "] v" + ModDamage.getInstance().getDescription().getVersion() + " loading...");
 
 		if(reloadingAll)
 		{
@@ -255,19 +270,19 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 			MDEvent.registerVanillaEvents();
 			ExtensionManager.reload();
 			if(ExtensionManager.getGroupsManager() == GroupsManager.None)
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Permissions: No permissions plugin found.");
+				getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, "Permissions: No permissions plugin found.");
 			else
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, "Permissions: " + ExtensionManager.getGroupsManager().name() + " v" + GroupsManager.getVersion());
+				getLog().addToLogRecord(OutputPreset.CONSTANT, "Permissions: " + ExtensionManager.getGroupsManager().name() + " v" + GroupsManager.getVersion());
 			
 			if(ExtensionManager.regionsManagers.isEmpty())
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Region Plugins: No regional plugins found.");
+				getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, "Region Plugins: No regional plugins found.");
 			else
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, "Region Plugins: " + Utils.joinBy(", ", ExtensionManager.regionsManagers));
+				getLog().addToLogRecord(OutputPreset.CONSTANT, "Region Plugins: " + Utils.joinBy(", ", ExtensionManager.regionsManagers));
 			
 			if(ExtensionManager.getMcMMOPlugin() == null)
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "mcMMO: Plugin not found.");
+				getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, "mcMMO: Plugin not found.");
 			else
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, "mcMMO: Using version " + ExtensionManager.getMcMMOPlugin().getDescription().getVersion());
+				getLog().addToLogRecord(OutputPreset.CONSTANT, "mcMMO: Using version " + ExtensionManager.getMcMMOPlugin().getDescription().getVersion());
 			
 			stopwatch.stop(TM_EXT_PL_MAN);
 		}
@@ -286,7 +301,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 			if(!writeDefaults())
 				return false;
 		}
-		catch (IOException e){ ModDamageLogger.printToLog(Level.SEVERE, "Fatal: could not close " + configString_defaultConfigPath + "!"); }
+		catch (IOException e){ getLog().printToLog(Level.SEVERE, "Fatal: could not close " + configString_defaultConfigPath + "!"); }
 		finally {
 			if (stream != null) {
 				try {
@@ -305,47 +320,47 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 			if (logFile != null)
 			{
 				loggingEnabled = true;
-				ModDamageLogger.getInstance().setLogFile(null);
+				getLog().setLogFile(null);
 			}
-			ModDamageLogger.getInstance().setLogFile(logFile, appendLog);
+			getLog().setLogFile(logFile, appendLog);
 		
 		if (loggingEnabled)
 		{
 			if (ModDamage.getInstance().getLogger().getHandlers().length > 0)
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO, "File Logging for 'config.yml' is enabled.");
+				getLog().addToLogRecord(OutputPreset.INFO, "File Logging for 'config.yml' is enabled.");
 			else
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.FAILURE, "File logging failed to load for '" + "config.yml" + "'.");
+				getLog().addToLogRecord(OutputPreset.FAILURE, "File logging failed to load for '" + "config.yml" + "'.");
 		}
 		else
-			ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO, "File logging for '" + "config.yml" + "' is disabled.");
+			getLog().addToLogRecord(OutputPreset.INFO, "File logging for '" + "config.yml" + "' is disabled.");
 		
 		// Default message settings
 		if(MDEvent.disableDeathMessages)
-			ModDamageLogger.constant("Vanilla death messages disabled.");
+			getLog().constant("Vanilla death messages disabled.");
 		else
-			ModDamageLogger.info_verbose("Vanilla death messages enabled.");
+			getLog().info_verbose("Vanilla death messages enabled.");
 		
 		if(MDEvent.disableJoinMessages)
-			ModDamageLogger.constant("Vanilla join messages disabled.");
+			getLog().constant("Vanilla join messages disabled.");
 		else
-			ModDamageLogger.info_verbose("Vanilla join messages enabled.");
+			getLog().info_verbose("Vanilla join messages enabled.");
 		
 		if(MDEvent.disableQuitMessages)
-			ModDamageLogger.constant("Vanilla quit messages disabled.");
+			getLog().constant("Vanilla quit messages disabled.");
 		else
-			ModDamageLogger.info_verbose("Vanilla quit messages enabled.");
+			getLog().info_verbose("Vanilla quit messages enabled.");
 		
 		if(MDEvent.disableKickMessages)
-			ModDamageLogger.constant("Vanilla kick messages disabled.");
+			getLog().constant("Vanilla kick messages disabled.");
 		else
-			ModDamageLogger.info_verbose("Vanilla kick messages enabled.");
+			getLog().info_verbose("Vanilla kick messages enabled.");
 		
 
 		if(serverUsername != null && serverPassword != null) {
-			ModDamageLogger.constant("Web server starting on port "+ (serverBindaddr != null? serverBindaddr : "*") +":"+ serverPort);
+			getLog().constant("Web server starting on port "+ (serverBindaddr != null? serverBindaddr : "*") +":"+ serverPort);
 			MDServer.startServer(serverBindaddr, serverPort, serverUsername, serverPassword);
 		} else
-			ModDamageLogger.info_verbose("Web server not started");
+			getLog().info_verbose("Web server not started");
 		
 		
 		LoadState.pluginState = LoadState.combineStates(MDEvent.getCombinedLoadState(), AliasManager.getState());
@@ -353,38 +368,38 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 		double time = stopwatch.stop(TM_MAINLOAD);
 		String timer = "(" + time + " \u00b5s) ";
 		
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Timings:");
+		getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, "Timings:");
 		
-		ModDamageLogger.getInstance().changeIndentation(true);
+		getLog().changeIndentation(true);
 		
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Event Loading: " + (stopwatch.time(TM_MDEvent)/1000) + " \u00b5s) ");
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "External Event Manager: "+ (stopwatch.time(TM_EXT_PL_MAN)/1000) + " \u00b5s");
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO_VERBOSE, "Script Loading: " + (stopwatch.time(TM_SCRIPTLOAD)/1000) + " \u00b5s) ");
+		getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, "Event Loading: " + (stopwatch.time(TM_MDEvent)/1000) + " \u00b5s) ");
+		getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, "External Event Manager: "+ (stopwatch.time(TM_EXT_PL_MAN)/1000) + " \u00b5s");
+		getLog().addToLogRecord(OutputPreset.INFO_VERBOSE, "Script Loading: " + (stopwatch.time(TM_SCRIPTLOAD)/1000) + " \u00b5s) ");
 		
-		ModDamageLogger.getInstance().changeIndentation(false);
+		getLog().changeIndentation(false);
 		
 		switch(LoadState.pluginState)
 		{
 			case NOT_LOADED:
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, ModDamageLogger.getInstance().logPrepend() + timer + "No configuration loaded.");
+				getLog().addToLogRecord(OutputPreset.CONSTANT, getLog().logPrepend() + timer + "No configuration loaded.");
 				break;
 			case FAILURE:
-				ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, ModDamageLogger.getInstance().logPrepend() + timer + "Loaded configuration with one or more errors.");
+				getLog().addToLogRecord(OutputPreset.CONSTANT, getLog().logPrepend() + timer + "Loaded configuration with one or more errors.");
 				break;
 			case SUCCESS:
-				int worstValue = ModDamageLogger.getInstance().worstLogMessageLevel.intValue();
+				int worstValue = getLog().worstLogMessageLevel.intValue();
 				
 				if (worstValue >= Level.SEVERE.intValue()) {
-					ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, ModDamageLogger.getInstance().logPrepend() + timer + "Finished loading configuration with errors.");
+					getLog().addToLogRecord(OutputPreset.CONSTANT, getLog().logPrepend() + timer + "Finished loading configuration with errors.");
 				}
 				else if (worstValue >= Level.WARNING.intValue()) {
-					ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, ModDamageLogger.getInstance().logPrepend() + timer + "Finished loading configuration with warnings.");
+					getLog().addToLogRecord(OutputPreset.CONSTANT, getLog().logPrepend() + timer + "Finished loading configuration with warnings.");
 				}
 				else if (worstValue >= Level.INFO.intValue()) {
-					ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, ModDamageLogger.getInstance().logPrepend() + timer + "Finished loading configuration.");
+					getLog().addToLogRecord(OutputPreset.CONSTANT, getLog().logPrepend() + timer + "Finished loading configuration.");
 				}
 				else {
-					ModDamageLogger.getInstance().addToLogRecord(OutputPreset.CONSTANT, ModDamageLogger.getInstance().logPrepend() + timer + "Weird reload: " + ModDamageLogger.getInstance().worstLogMessageLevel);
+					getLog().addToLogRecord(OutputPreset.CONSTANT, getLog().logPrepend() + timer + "Weird reload: " + getLog().worstLogMessageLevel);
 				}
 				
 				break;
@@ -392,28 +407,28 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 			default: throw new Error("Unknown state: "+LoadState.pluginState+" $PC280");
 		}
 		
-		if (ModDamageLogger.getInstance().getDebugSetting() == DebugSetting.QUIET && ModDamageLogger.getInstance().logMessagesSoFar >= ModDamageLogger.getInstance().maxLogMessagesToShow)
-			ModDamageLogger.printToLog(Level.INFO, "Suppressed "+(ModDamageLogger.getInstance().logMessagesSoFar-ModDamageLogger.getInstance().maxLogMessagesToShow)+" error messages");
+		if (getLog().getDebugSetting() == DebugSetting.QUIET && getLog().logMessagesSoFar >= getLog().maxLogMessagesToShow)
+			getLog().printToLog(Level.INFO, "Suppressed "+(getLog().logMessagesSoFar-getLog().maxLogMessagesToShow)+" error messages");
 		
 		return true;
 	}
 	
 	private boolean writeDefaults()
 	{
-		ModDamageLogger.getInstance().addToLogRecord(OutputPreset.INFO, ModDamageLogger.getInstance().logPrepend() + "No configuration file found! Writing a blank config in " + configString_defaultConfigPath + "...");
+		getLog().addToLogRecord(OutputPreset.INFO, getLog().logPrepend() + "No configuration file found! Writing a blank config in " + configString_defaultConfigPath + "...");
 		if(!configFile.exists())
 		{
 			try
 			{
 				if(!(configFile.getParentFile().exists() || configFile.getParentFile().mkdirs()) || !configFile.createNewFile())
 				{
-					ModDamageLogger.printToLog(Level.SEVERE, "Fatal error: could not create " + configString_defaultConfigPath + ".");
+					getLog().printToLog(Level.SEVERE, "Fatal error: could not create " + configString_defaultConfigPath + ".");
 					return false;
 				}
 			}
 			catch (IOException e)
 			{
-				ModDamageLogger.printToLog(Level.SEVERE, "Error: could not create new " + configString_defaultConfigPath + ".");
+				getLog().printToLog(Level.SEVERE, "Error: could not create new " + configString_defaultConfigPath + ".");
 				e.printStackTrace();
 				return false;
 			}
@@ -441,14 +456,14 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 		
 		outputString += newline + "\t## File Logging settings.";
 		outputString += newline + "\t## To Enable File Logging. Uncomment both lines below.";
-		outputString += newline + "\t##ModDamageLogger.getInstance().setLogFile file = config.ModDamageLogger.getInstance().setLogFile";
+		outputString += newline + "\t##log.setLogFile file = config.log.setLogFile";
 		outputString += newline + "\t##append logs = yes";
 		
 		//TODO Can this work?
 //		outputString += newline + newline + "#Debug File Logging";
 //		outputString += newline + "#Uncomment the following to enable file logging";
 //		outputString += newline + "#Logging:";
-//		outputString += newline + "#    " + "file: " + "config" + ".ModDamageLogger.getInstance().setLogFile";
+//		outputString += newline + "#    " + "file: " + "config" + ".log.setLogFile";
 //		outputString += newline + "#    " + "append: true";
 		
 		outputString += newline + newline + "Aliases";
@@ -484,7 +499,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 		}
 		
 		
-		ModDamageLogger.printToLog(Level.INFO, "Completed auto-generation of " + configString_defaultConfigPath + ".");
+		getLog().printToLog(Level.INFO, "Completed auto-generation of " + configString_defaultConfigPath + ".");
 
 		try
 		{
@@ -499,7 +514,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 		}
 		catch (IOException e)
 		{
-			ModDamageLogger.printToLog(Level.SEVERE, "Error writing to " + configString_defaultConfigPath + ".");
+			getLog().printToLog(Level.SEVERE, "Error writing to " + configString_defaultConfigPath + ".");
 		}
 		return true;
 	}
@@ -549,7 +564,7 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 
 	public void toggleDebugging(Player player)
 	{
-		switch(ModDamageLogger.getInstance().getDebugSetting())
+		switch(getLog().getDebugSetting())
 		{
 			case QUIET:
 				setDebugging(player, DebugSetting.NORMAL);
@@ -569,18 +584,26 @@ public class ModDamageConfigurationHandler implements ScriptLineHandler
 	{
 		if(setting != null)
 		{
-			if(!ModDamageLogger.getInstance().getDebugSetting().equals(setting))
+			if(!getLog().getDebugSetting().equals(setting))
 			{
 				if(replaceOrAppendInFile(configFile, "debugging:.*", "debugging: " + setting.name().toLowerCase()))
 				{
-					ModDamage.sendMessage(player, "Changed debug from " + ModDamageLogger.getInstance().getDebugSetting().name().toLowerCase() + " to " + setting.name().toLowerCase(), ChatColor.GREEN);
-					ModDamageLogger.getInstance().setDebugSetting(setting);
+					ModDamage.sendMessage(player, "Changed debug from " + getLog().getDebugSetting().name().toLowerCase() + " to " + setting.name().toLowerCase(), ChatColor.GREEN);
+					getLog().setDebugSetting(setting);
 				}
 				else if(player != null)
 					player.sendMessage(ModDamage.chatPrepend(ChatColor.RED) + "Couldn't save changes to " + configString_defaultConfigPath + ".");
 			}
 			else ModDamage.sendMessage(player, "Debug already set to " + setting.name().toLowerCase() + "!", ChatColor.RED);
 		}
-		else ModDamageLogger.printToLog(Level.SEVERE, "Error: bad debug setting sent. Valid settings: normal, quiet, verbose");// shouldn't																								// happen
+		else getLog().printToLog(Level.SEVERE, "Error: bad debug setting sent. Valid settings: normal, quiet, verbose");// shouldn't																								// happen
+	}
+
+	public String name() {
+		return "config.mdscript";
+	}
+
+	public ModDamageLogger getLog() {
+		return log;
 	}
 }
