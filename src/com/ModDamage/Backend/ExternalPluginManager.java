@@ -196,9 +196,7 @@ public class ExternalPluginManager
 			public List<String> getGroups(Player player)
 			{
 				if(player != null){
-					ArrayList<String> list = new ArrayList<String>();
-					list.addAll(de.bananaco.bpermissions.api.WorldManager.getInstance().getWorld(player.getWorld().getName()).getUser(player.getName()).getGroupsAsString());
-					return list;
+					return new ArrayList<String>(de.bananaco.bpermissions.api.WorldManager.getInstance().getWorld(player.getWorld().getName()).getUser(player.getName()).getGroupsAsString());
 				}
 				return Arrays.asList();
 			}
