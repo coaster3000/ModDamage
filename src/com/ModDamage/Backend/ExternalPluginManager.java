@@ -6,13 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 
-import org.anjocaido.groupmanager.GroupManager;
-import org.anjocaido.groupmanager.data.User;
-import org.anjocaido.groupmanager.dataholder.OverloadedWorldHolder;
-import org.anjocaido.groupmanager.dataholder.worlds.WorldsHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-import ru.tehkode.permissions.PermissionManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.ModDamage.MDEvent;
 import com.ModDamage.LogUtil;
@@ -61,7 +58,6 @@ import com.gmail.nossr50.mcMMO;
 import com.palmergames.bukkit.towny.db.TownyDataSource;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class ExternalPluginManager
@@ -173,90 +169,23 @@ public class ExternalPluginManager
 			@Override
 			public List<String> getGroups(Player player) { return Arrays.asList(); }
 		},
-		PermissionsEx
+		Vault
 		{
-			PermissionManager permissionManager = null;
+			Permission permission = null;
+
+
 			@Override
-			public List<String> getGroups(Player player)
-			{
-				if(player != null)
-					return Arrays.asList(permissionManager.getUser(player).getGroupsNames(player.getWorld().getName()));
-				return Arrays.asList();
+			public List<String> getGroups(Player player) {
+				if (permission == null)
+					return Arrays.asList();
+				return Arrays.asList(permission.getPlayerGroups(player));
 			}
 
 			@Override
-			protected void reload(Plugin plugin)
-			{
-				permissionManager = ru.tehkode.permissions.bukkit.PermissionsEx.getPermissionManager();
-			}
-		},
-		bPermissions
-		{
-			@Override
-			public List<String> getGroups(Player player)
-			{
-				if(player != null){
-					return new ArrayList<String>(de.bananaco.bpermissions.api.WorldManager.getInstance().getWorld(player.getWorld().getName()).getUser(player.getName()).getGroupsAsString());
-				}
-				return Arrays.asList();
-			}
-
-			@Override
-			public void reload(Plugin plugin){}
-		},
-		PermissionsBukkit
-		{
-			PermissionsPlugin plugin = null;
-
-			@Override
-			public List<String> getGroups(Player player)
-			{
-				if(player != null)
-				{
-					List<String> groupStrings = new ArrayList<String>();
-					for(com.platymuus.bukkit.permissions.Group group : plugin.getGroups(player.getName()))
-						groupStrings.add(group.getName());
-					return groupStrings;
-				}
-				return Arrays.asList();
-			}
-
-			@Override
-			protected void reload(Plugin plugin)
-			{
-				this.plugin = (PermissionsPlugin)plugin;
-			}
-		},
-		GroupManager
-		{
-			GroupManager plugin = null;
-			WorldsHolder wh = null;
-
-			@Override
-			public List<String> getGroups(Player player)
-			{
-				if(player != null)
-				{
-					OverloadedWorldHolder wd = wh.getWorldData(player);
-					User user = wd.getUser(player.getName());
-
-					List<String> groupStrings = new ArrayList<String>(1 + user.subGroupsSize());
-					groupStrings.add(user.getGroupName());
-					for(String group : user.subGroupListStringCopy())
-						groupStrings.add(group);
-					return groupStrings;
-				}
-				return Arrays.asList();
-			}
-
-			@Override
-			protected void reload(Plugin plugin)
-			{
-				this.plugin = (GroupManager)plugin;
-				if (this.plugin != null)
-				{
-					wh = this.plugin.getWorldsHolder();
-				}
+			protected void reload(Plugin plugin) {
+				RegisteredServiceProvider<Permission> perm = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+				if (perm != null)
+					permission = perm.getProvider();
 			}
 		},
 		SimpleClans
