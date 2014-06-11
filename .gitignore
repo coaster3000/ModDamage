@@ -10,3 +10,4 @@ web-bin*
 .idea
 .iml
 *.iml
+*.eml
