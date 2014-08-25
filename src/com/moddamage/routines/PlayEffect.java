@@ -1,5 +1,7 @@
 package com.moddamage.routines;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,38 +17,44 @@ import com.moddamage.expressions.LiteralNumber;
 import com.moddamage.parsing.DataProvider;
 import com.moddamage.parsing.IDataProvider;
 
+
 public class PlayEffect extends Routine
 {
-	enum EffectType {
-		BOW_FIRE(Effect.BOW_FIRE),
-		CLICK1(Effect.CLICK1),
-		CLICK2(Effect.CLICK2),
-		DOOR_TOGGLE(Effect.DOOR_TOGGLE),
-		EXTINGUISH(Effect.EXTINGUISH),
-		RECORD_PLAY(Effect.RECORD_PLAY),
-		GHAST_SHRIEK(Effect.GHAST_SHRIEK),
-		GHAST_SHOOT(Effect.GHAST_SHOOT),
-		BLAZE_SHOOT(Effect.BLAZE_SHOOT),
-		SMOKE(Effect.SMOKE),
-		BLOCK_BREAK(Effect.STEP_SOUND),
-		POTION_BREAK(Effect.POTION_BREAK),
-		ENDER_SIGNAL(Effect.ENDER_SIGNAL),
-		MOBSPAWNER_FLAMES(Effect.MOBSPAWNER_FLAMES),
-		STEP_SOUND(Effect.STEP_SOUND),
-		ZOMBIE_CHEW_IRON_DOOR(Effect.ZOMBIE_CHEW_IRON_DOOR),
-		ZOMBIE_CHEW_WOODEN_DOOR(Effect.ZOMBIE_CHEW_WOODEN_DOOR),
-		ZOMBIE_DESTROY_DOOR(Effect.ZOMBIE_DESTROY_DOOR);
-		
+	public static class EffectType {
+		public static Map<String, EffectType> effects = new HashMap<String, EffectType>();
+
 		private final Effect effect;
-		private EffectType(Effect effect) { this.effect = effect; }
-		public Integer dataForExtra(String extra) { return null; }
+
+		public EffectType(Effect effect) {
+			this.effect = effect;
+		}
+
+
+		public static void registerTypes() {
+			effects.clear();
+			for (Effect e : Effect.values())
+				effects.put(e.name(), new EffectType(e));
+		}
+
+		public EffectType[] values() {
+			return effects.values().toArray(new EffectType[effects.size()]);
+		}
+
+		public static EffectType valueOf(String value) {
+			if (effects.containsKey(value)) return effects.get(value);
+			throw new IllegalArgumentException("No such value '" + value + "'!");
+		}
+
+		public Integer dataForExtra(String extra) {
+			return null;
+		}
 	}
-	
+
 	private final IDataProvider<Location> locDP;
 	private final EffectType effectType;
 	private final IDataProvider<? extends Number> effectData;
 	private final IDataProvider<Integer> radius;
-	
+
 	protected PlayEffect(ScriptLine scriptLine, IDataProvider<Location> locDP, EffectType effectType, IDataProvider<? extends Number> data, IDataProvider<Integer> radius)
 	{
 		super(scriptLine);
@@ -61,22 +69,23 @@ public class PlayEffect extends Routine
 	{
 		Location loc = locDP.get(data);
 		if (loc == null) return;
-		
+
 		Number eData = effectData.get(data);
 		if (eData == null) return;
-		
+
 		if (radius == null)
 			loc.getWorld().playEffect(loc, effectType.effect, eData.intValue());
 		else {
 			Number rad = radius.get(data);
 			if (rad == null) return;
-			
+
 			loc.getWorld().playEffect(loc, effectType.effect, eData.intValue(), rad.intValue());
 		}
 	}
 
 	public static void register()
 	{
+		EffectType.registerTypes();
 		Routine.registerRoutine(Pattern.compile("(.+?)\\.playeffect\\.(\\w+)(?:\\.([^.]+))?(?:\\.radius\\.(.+))?", Pattern.CASE_INSENSITIVE), new RoutineFactory());
 	}
 
@@ -84,10 +93,10 @@ public class PlayEffect extends Routine
 	{
 		@Override
 		public IRoutineBuilder getNew(Matcher matcher, ScriptLine scriptLine, EventInfo info)
-		{ 
+		{
 			IDataProvider<Location> locDP = DataProvider.parse(scriptLine, info, Location.class, matcher.group(1));
 			if (locDP == null) return null;
-			
+
 			EffectType effectType;
 			try
 			{
