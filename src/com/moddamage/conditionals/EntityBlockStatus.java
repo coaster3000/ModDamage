@@ -12,6 +12,7 @@ import com.moddamage.ModDamage;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.alias.MaterialAliaser;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.DataProvider;
@@ -137,7 +138,7 @@ public class EntityBlockStatus extends Conditional<Entity>
 		DataProvider.register(Boolean.class, Entity.class, pattern, new IDataParser<Boolean, Entity>()
 			{
 				@Override
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<Entity> entityDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine line, EventInfo info, IDataProvider<Entity> entityDP, Matcher m, StringMatcher sm)
 				{
 					BlockStatusType statusType = null;
 					for(BlockStatusType type : BlockStatusType.values())
@@ -145,7 +146,7 @@ public class EntityBlockStatus extends Conditional<Entity>
 								statusType = type;
 					if(statusType == null) return null;
 					
-					Collection<Material> materials = MaterialAliaser.match(m.group(2));
+					Collection<Material> materials = MaterialAliaser.match(line, m.group(2));
 					if (materials == null || materials.isEmpty()) return null;
 					
 					return new EntityBlockStatus(entityDP, statusType, materials);

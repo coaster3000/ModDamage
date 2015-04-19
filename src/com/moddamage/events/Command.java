@@ -1,10 +1,6 @@
 package com.moddamage.events;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -14,10 +10,7 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.moddamage.LogUtil;
-import com.moddamage.MDEvent;
-import com.moddamage.ModDamage;
-import com.moddamage.Utils;
+import com.moddamage.*;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.ScriptLine;
 import com.moddamage.backend.ScriptLineHandler;
@@ -59,7 +52,6 @@ public class Command extends MDEvent implements ScriptLineHandler
 		bukkitCommands.clear();
 	}
 	
-	@Override
 	public ScriptLineHandler getLineHandler()
 	{
 		return this;
@@ -110,7 +102,7 @@ public class Command extends MDEvent implements ScriptLineHandler
         }
 		
 		CommandInfo command = new CommandInfo(name, args, catchAll, catchAllName);
-		LogUtil.info("Command ["+command.name+"]: "+logSB.toString());
+		LogUtil.info(line, "Command ["+command.name+"]: "+logSB.toString());
 //		command.routines = RoutineAliaser.parseRoutines(commandEntry.getValue(), command.eventInfo);
 //		if (command.routines == null)
 //		{

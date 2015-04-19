@@ -1,5 +1,6 @@
 package com.moddamage.expressions;
 
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.function.*;
 import com.moddamage.parsing.DataProvider;
@@ -41,7 +42,7 @@ public abstract class StringExp<From> extends DataProvider<String, From>
 
 
 	@SuppressWarnings("unchecked")
-	public static List<IDataProvider<String>> getStrings(Object nestedContent, EventInfo info)
+	public static List<IDataProvider<String>> getStrings(ScriptLine scriptLine, Object nestedContent, EventInfo info)
 	{
 		List<String> strings = new ArrayList<String>();
 		if (nestedContent instanceof String)
@@ -54,7 +55,7 @@ public abstract class StringExp<From> extends DataProvider<String, From>
 		List<IDataProvider<String>> istrings = new ArrayList<IDataProvider<String>>();
 		for(String string : strings)
 		{
-			istrings.add(new InterpolatedString(string, info, true));
+			istrings.add(new InterpolatedString(scriptLine, string, info, true));
 		}
 
 		return istrings;

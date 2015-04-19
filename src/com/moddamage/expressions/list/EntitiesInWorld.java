@@ -12,6 +12,7 @@ import org.bukkit.World;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.ListExp;
@@ -63,7 +64,7 @@ public class EntitiesInWorld extends ListExp {
     public static void register()
     {
         DataProvider.register(List.class, Pattern.compile("(?:all\\s+)?(\\w+) in ", Pattern.CASE_INSENSITIVE), new BaseDataParser<List>() {
-            public EntitiesInWorld parse(EventInfo info, Matcher m, StringMatcher sm) {
+            public EntitiesInWorld parse(ScriptLine scriptLine, EventInfo info, Matcher m, StringMatcher sm) {
                 EntityType entityType = EntityType.getElementNamed(m.group(1));
                 if (entityType == null) return null;
 
@@ -71,7 +72,7 @@ public class EntitiesInWorld extends ListExp {
                 if (sm.matchesFront(serverPattern))
                     worldDP = null;
                 else {
-                	worldDP = DataProvider.parse(info, World.class, sm.spawn());
+                	worldDP = DataProvider.parse(scriptLine, info, World.class, sm.spawn());
                 	if (worldDP == null) return null;
                 }
 

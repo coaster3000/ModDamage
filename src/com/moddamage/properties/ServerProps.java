@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 
 import com.moddamage.StringMatcher;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.BaseDataParser;
@@ -21,7 +22,7 @@ public class ServerProps
 	{
 		DataProvider.register(Server.class, Pattern.compile("server", Pattern.CASE_INSENSITIVE), 
 				new BaseDataParser<Server>() {
-					public IDataProvider<Server> parse(EventInfo info, Matcher m, StringMatcher sm)
+					public IDataProvider<Server> parse(ScriptLine scriptLine, EventInfo info, Matcher m, StringMatcher sm)
 					{
 						return sm.acceptIf(new IDataProvider<Server>() {
 							public Server get(EventData data) {

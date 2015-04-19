@@ -7,11 +7,13 @@ import org.bukkit.Bukkit;
 
 import com.moddamage.LogUtil;
 import com.moddamage.alias.Aliaser.CollectionAliaser;
+import com.moddamage.backend.ScriptLine;
 
 public class WorldAliaser extends CollectionAliaser<String> 
 {
 	public static WorldAliaser aliaser = new WorldAliaser();
-	public static Collection<String> match(String string) { return aliaser.matchAlias(string); }
+	public static Collection<String> match(ScriptLine scriptLine) { return aliaser.matchAlias(scriptLine); }
+	public static Collection<String> match(ScriptLine scriptLine, String string) { return aliaser.matchAlias(scriptLine, string); }
 	
 	public WorldAliaser() {super(AliasManager.World.name()); }
 

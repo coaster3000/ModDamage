@@ -11,6 +11,7 @@ import com.moddamage.alias.ItemAliaser;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.ItemHolder;
 import com.moddamage.backend.ModDamageItemStack;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.DataProvider;
@@ -52,13 +53,13 @@ public class ItemMatches extends Conditional<ItemHolder>
 		DataProvider.register(Boolean.class, ItemHolder.class, pattern, new IDataParser<Boolean, ItemHolder>()
 			{
 				@Override
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<ItemHolder> itemDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<ItemHolder> itemDP, Matcher m, StringMatcher sm)
 				{
-					Collection<ModDamageItemStack> matchedItems = ItemAliaser.match(m.group(2), info);
+					Collection<ModDamageItemStack> matchedItems = ItemAliaser.match(scriptLine, m.group(2), info);
 					if(matchedItems == null || matchedItems.isEmpty()) return null;
 						
 					if (m.group(1).equalsIgnoreCase("material"))
-						LogUtil.warning_strong("Using the material version is deprecated. Please use '"+ itemDP +".matches."+ m.group(2) +"' instead.");
+						LogUtil.warning_strong(scriptLine, "Using the material version is deprecated. Please use '"+ itemDP +".matches."+ m.group(2) +"' instead.");
 					
 					return new ItemMatches(itemDP, matchedItems);
 				}

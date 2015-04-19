@@ -1,5 +1,15 @@
 package com.moddamage.routines.nested;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+
 import com.moddamage.LogUtil;
 import com.moddamage.ModDamage;
 import com.moddamage.alias.CommandAliaser;
@@ -11,15 +21,6 @@ import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.DataProvider;
 import com.moddamage.parsing.IDataProvider;
 import com.moddamage.routines.Routine;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Command extends NestedRoutine 
 {
@@ -45,7 +46,7 @@ public class Command extends NestedRoutine
 	
 	private abstract static class CommandTarget
 	{
-		protected static CommandTarget match(String key, EventInfo info)
+		protected static CommandTarget match(ScriptLine scriptLine, String key, EventInfo info)
 		{
 			if (key.equalsIgnoreCase("console"))
 				return new CommandTarget()
@@ -61,7 +62,7 @@ public class Command extends NestedRoutine
 					};
 			
 			{
-				final IDataProvider<Entity> entityDP = DataProvider.parse(info, Entity.class, key);
+				final IDataProvider<Entity> entityDP = DataProvider.parse(scriptLine, info, Entity.class, key);
 				if(entityDP == null) return null;
 				return new CommandTarget()
 				{
@@ -100,14 +101,14 @@ public class Command extends NestedRoutine
 		@Override
 		public IRoutineBuilder getNew(Matcher matcher, ScriptLine scriptLine, EventInfo info)
 		{
-			CommandTarget commandTarget = CommandTarget.match(matcher.group(1), info);
+			CommandTarget commandTarget = CommandTarget.match(scriptLine, matcher.group(1), info);
 			if(commandTarget == null)
 			{
-				LogUtil.error("Bad command target: "+matcher.group(1));
+				LogUtil.error(scriptLine, "Bad command target: "+matcher.group(1));
 				return null;
 			}
 			
-			Collection<IDataProvider<String>> commands = CommandAliaser.match(matcher.group(2), info);
+			Collection<IDataProvider<String>> commands = CommandAliaser.match(scriptLine, matcher.group(2), info);
 			if (commands == null)
 			{
 				LogUtil.error("This command form can only be used for command aliases. Please use the following instead.");
@@ -133,7 +134,7 @@ public class Command extends NestedRoutine
 		@Override
 		public IRoutineBuilder getNew(Matcher matcher, ScriptLine scriptLine, EventInfo info)
 		{
-			CommandTarget commandTarget = CommandTarget.match(matcher.group(1), info);
+			CommandTarget commandTarget = CommandTarget.match(scriptLine, matcher.group(1), info);
 			if(commandTarget == null) return null;
 			
 
@@ -166,7 +167,7 @@ public class Command extends NestedRoutine
 
 		public void addString(String str)
 		{
-			IDataProvider<String> cmdDP = DataProvider.parse(info, String.class, str);
+			IDataProvider<String> cmdDP = DataProvider.parse(scriptLine, info, String.class, str);
 			if (cmdDP != null) {
 				commands.add(cmdDP);
 				LogUtil.info(cmdDP.toString());

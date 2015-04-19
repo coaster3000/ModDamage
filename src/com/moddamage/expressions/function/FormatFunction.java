@@ -9,6 +9,7 @@ import com.moddamage.LogUtil;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.BaseDataParser;
@@ -51,9 +52,9 @@ public class FormatFunction implements IDataProvider<String>
 		DataProvider.register(String.class, Pattern.compile("format\\("), new BaseDataParser<String>()
 			{
 				@Override
-				public IDataProvider<String> parse(EventInfo info, Matcher m, StringMatcher sm)
+				public IDataProvider<String> parse(ScriptLine scriptLine, EventInfo info, Matcher m, StringMatcher sm)
 				{
-					IDataProvider<String> formatDP = DataProvider.parse(info, String.class, sm.spawn(), false, true, endPattern);
+					IDataProvider<String> formatDP = DataProvider.parse(scriptLine, info, String.class, sm.spawn(), false, true, endPattern);
 					if (formatDP == null) return null;
 					
 					List<IDataProvider<Object>> argsDP = new ArrayList<IDataProvider<Object>>();
@@ -62,7 +63,7 @@ public class FormatFunction implements IDataProvider<String>
 					{
 						Matcher em = sm.matchFront(endPattern);
 						if (em == null) {
-							LogUtil.error("Expected , or ) at \"" + sm.string + "\"");
+							LogUtil.error(scriptLine, "Expected , or ) at \"" + sm.string + "\"");
 							return null;
 						}
 						
@@ -70,7 +71,7 @@ public class FormatFunction implements IDataProvider<String>
 							break;
 						
 						
-						IDataProvider<Object> arg = DataProvider.parse(info, null, sm.spawn(), false, true, endPattern);
+						IDataProvider<Object> arg = DataProvider.parse(scriptLine, info, null, sm.spawn(), false, true, endPattern);
 						if (arg == null) return null;
 
 						argsDP.add(arg);

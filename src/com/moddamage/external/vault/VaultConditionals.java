@@ -1,15 +1,16 @@
 package com.moddamage.external.vault;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.bukkit.entity.Player;
+
 import com.moddamage.StringMatcher;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.external.vault.VaultConditional.VaultConditionalParser;
 import com.moddamage.parsing.DataProvider;
 import com.moddamage.parsing.IDataProvider;
-import org.bukkit.entity.Player;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class VaultConditionals
 {

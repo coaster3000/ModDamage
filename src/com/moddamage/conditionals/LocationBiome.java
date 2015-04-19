@@ -10,6 +10,7 @@ import org.bukkit.block.Biome;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.alias.BiomeAliaser;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.DataProvider;
@@ -45,9 +46,9 @@ public class LocationBiome extends Conditional<Location>
 		DataProvider.register(Boolean.class, Location.class, pattern, new IDataParser<Boolean, Location>()
 			{
 				@Override
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<Location> locDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<Location> locDP, Matcher m, StringMatcher sm)
 				{
-					Collection<Biome> biomes = BiomeAliaser.match(m.group(1));
+					Collection<Biome> biomes = BiomeAliaser.match(scriptLine, m.group(1));
 					if(biomes.isEmpty()) return null;
 					
 					return new LocationBiome(locDP, biomes);

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import com.moddamage.StringMatcher;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.DataProvider;
@@ -46,9 +47,9 @@ public class PlayerCanSee extends Conditional<Player>
 		DataProvider.register(Boolean.class, Player.class, pattern, new IDataParser<Boolean, Player>()
 			{
 				@Override
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
 				{
-                    IDataProvider<Player> otherDP = DataProvider.parse(info, Player.class, sm.spawn());
+                    IDataProvider<Player> otherDP = DataProvider.parse(scriptLine, info, Player.class, sm.spawn());
                     if (otherDP == null) return null;
 
                     return sm.acceptIf(new PlayerCanSee(playerDP, otherDP));

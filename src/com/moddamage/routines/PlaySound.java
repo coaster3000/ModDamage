@@ -55,11 +55,11 @@ public class PlaySound extends Routine
 		@Override
 		public IRoutineBuilder getNew(Matcher matcher, ScriptLine scriptLine, EventInfo info)
 		{
-            IDataProvider<Player> playerDP = DataProvider.parse(info, Player.class, matcher.group(1));
+            IDataProvider<Player> playerDP = DataProvider.parse(scriptLine, info, Player.class, matcher.group(1));
             if (playerDP == null) return null;
             String locStr = matcher.group(3);
             if (locStr == null) locStr = matcher.group(1);
-			IDataProvider<Location> locDP = DataProvider.parse(info, Location.class, locStr);
+			IDataProvider<Location> locDP = DataProvider.parse(scriptLine, info, Location.class, locStr);
 			if (locDP == null) return null;
 			
 			Sound sound;
@@ -74,8 +74,8 @@ public class PlaySound extends Routine
 			}
 
 			
-			IDataProvider<Integer> volumeDP = DataProvider.parse(info, Integer.class, matcher.group(4));
-            IDataProvider<Integer> pitchDP = DataProvider.parse(info, Integer.class, matcher.group(5));
+			IDataProvider<Integer> volumeDP = DataProvider.parse(scriptLine, info, Integer.class, matcher.group(4));
+            IDataProvider<Integer> pitchDP = DataProvider.parse(scriptLine, info, Integer.class, matcher.group(5));
             if (volumeDP == null || pitchDP == null) return null;
 			
             LogUtil.info("PlaySound: " + sound + " for:" + playerDP + " at:" + locDP + " volume:" + volumeDP + " pitch:" + pitchDP);

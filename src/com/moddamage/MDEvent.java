@@ -1,6 +1,13 @@
 package com.moddamage;
 
-import com.moddamage.PluginConfiguration.LoadState;
+import java.util.*;
+import java.util.Map.Entry;
+
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+
+import com.moddamage.Config.LoadState;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.EventFinishedListener;
 import com.moddamage.backend.ScriptLineHandler;
@@ -22,12 +29,6 @@ import com.moddamage.events.weather.ThunderChange;
 import com.moddamage.events.weather.WeatherChange;
 import com.moddamage.events.world.StructureGrow;
 import com.moddamage.routines.Routines;
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 public class MDEvent implements Listener
 {
@@ -192,8 +193,8 @@ public class MDEvent implements Listener
         eventFinished(false);
 	}
 	protected Routines routines = null;
-	protected LoadState loadState = LoadState.NOT_LOADED;
-	protected static LoadState combinedLoadState = LoadState.NOT_LOADED;
+	protected LoadState loadState = Config.LoadState.NOT_LOADED;
+	protected static LoadState combinedLoadState = Config.LoadState.NOT_LOADED;
 	
 	public LoadState getState(){ return loadState; }
 	
@@ -207,8 +208,8 @@ public class MDEvent implements Listener
 
 		LogUtil.info("on " + name());
 		
-		loadState = LoadState.SUCCESS;
-		combinedLoadState = LoadState.combineStates(combinedLoadState, loadState);
+		loadState = Config.LoadState.SUCCESS;
+		combinedLoadState = Config.LoadState.combineStates(combinedLoadState, loadState);
 		
 		return routines.getLineHandler(myInfo);
 	}

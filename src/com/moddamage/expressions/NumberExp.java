@@ -2,6 +2,7 @@ package com.moddamage.expressions;
 
 import com.moddamage.StringMatcher;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.function.BlockFunction;
@@ -45,10 +46,10 @@ public abstract class NumberExp<From> extends DataProvider<Number, From>
      * @param info The current EventInfo
      * @return The new Number IDataProvider or null if parsing failed
      */
-    public static IDataProvider<Number> parse(StringMatcher sm, EventInfo info) {
+    public static IDataProvider<Number> parse(ScriptLine scriptLine, StringMatcher sm, EventInfo info) {
         Matcher m = sm.matchFront(InterpolatedString.interpolationStartPattern);
         if (m != null) {
-            IDataProvider<Number> numberDP = DataProvider.parse(info, Number.class, sm.spawn(), false, true, InterpolatedString.interpolationEndPattern);
+            IDataProvider<Number> numberDP = DataProvider.parse(scriptLine, info, Number.class, sm.spawn(), false, true, InterpolatedString.interpolationEndPattern);
             if (numberDP == null) return null;
             if (!sm.matchesFront(InterpolatedString.interpolationEndPattern)) return null;
             return numberDP;

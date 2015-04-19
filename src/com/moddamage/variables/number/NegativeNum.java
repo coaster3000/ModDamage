@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.BaseDataParser;
@@ -19,9 +20,9 @@ public class NegativeNum implements IDataProvider<Number>
 		DataProvider.register(Number.class, Pattern.compile("-"), new BaseDataParser<Number>()
 				{
 					@Override
-					public IDataProvider<Number> parse(EventInfo info, Matcher m, StringMatcher sm)
+					public IDataProvider<Number> parse(ScriptLine scriptLine, EventInfo info, Matcher m, StringMatcher sm)
 					{
-						IDataProvider<Number> number = DataProvider.parse(info, Number.class, sm.spawn());
+						IDataProvider<Number> number = DataProvider.parse(scriptLine, info, Number.class, sm.spawn());
 						if (number == null) return null;
 						
 						return sm.acceptIf(new NegativeNum(number));

@@ -65,21 +65,20 @@ public class MDLogger {
 	
 	private Formatter formatter;
 	
-	public MDLogger(final PluginConfiguration config)
+	public MDLogger(final Config config)
 	{
-//		this.config = config;
-		this.plugin = config.plugin;
+		this.plugin = config.getPlugin();
 		log = plugin.getLogger();
 		formatter = new Formatter() {
 			@Override
 			public String format(LogRecord record) {
-				StringBuilder b = new StringBuilder().append('[').append(config.name()).append("] [").append(String.format("%1$-10s", record.getLevel().toString())).append("] ");
+				StringBuilder b = new StringBuilder().append('[').append(config.getName()).append("] [").append(String.format("%1$-10s", record.getLevel().toString())).append("] ");
 				String name = plugin.getDescription().getPrefix();
 				if (name == null)
 					name = plugin.getName();
 				
 				String pat = "\\[" + name + "\\] ";
-				b.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).append(PluginConfiguration.newline).toString(); //StringBuilder is much more effecient then string concat.
+				b.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).append(Config.newline).toString(); //StringBuilder is much more effecient then string concat.
 				return b.toString();
 			}
 		};
@@ -184,8 +183,9 @@ public class MDLogger {
 				log.addHandler(filehandle);
 		}
 	}
-	
-	public void printToLog(Level level, String message){ log.log(level, "[" + plugin.getDescription().getName() + "] " + message); }
+
+	public void printToLog(Level level, String message){ log.log(level, message); }
+	public void printToLog(Level level, String message, Throwable thrown) { log.log(level, message, thrown); }
 	
 	public void resetLogCount(){
 		logMessagesSoFar = 0;

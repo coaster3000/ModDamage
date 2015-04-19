@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.moddamage.LogUtil;
-import com.moddamage.PluginConfiguration.LoadState;
+import com.moddamage.Config.LoadState;
 import com.moddamage.Utils;
 import com.moddamage.backend.ScriptLine;
 import com.moddamage.backend.ScriptLineHandler;

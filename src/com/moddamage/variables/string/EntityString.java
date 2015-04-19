@@ -10,6 +10,7 @@ import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.alias.TypeNameAliaser;
 import com.moddamage.backend.ExternalPluginManager;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.StringExp;
@@ -76,7 +77,7 @@ public class EntityString extends StringExp<Entity>
 		DataProvider.register(String.class, Entity.class, pattern, new IDataParser<String, Entity>()
 			{
 				@Override
-				public IDataProvider<String> parse(EventInfo info, IDataProvider<Entity> entityDP, Matcher m, StringMatcher sm)
+				public IDataProvider<String> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<Entity> entityDP, Matcher m, StringMatcher sm)
 				{
 					return new EntityString(entityDP, EntityStringProperty.valueOf(m.group(1).toUpperCase()));
 				}

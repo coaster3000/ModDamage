@@ -1,8 +1,12 @@
 package com.moddamage.external.mcMMO;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.gmail.nossr50.api.AbilityAPI;
 import com.moddamage.LogUtil;
 import com.moddamage.StringMatcher;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.conditionals.Conditional;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
@@ -10,9 +14,6 @@ import com.moddamage.parsing.DataProvider;
 import com.moddamage.parsing.IDataParser;
 import com.moddamage.parsing.IDataProvider;
 import org.bukkit.entity.Player;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AbilityConditional extends Conditional<Player>
 {
@@ -99,7 +100,7 @@ public class AbilityConditional extends Conditional<Player>
 		DataProvider.register(Boolean.class, Player.class, pattern, new IDataParser<Boolean, Player>()
 			{
 				@Override
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine line, EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
 				{
 					Ability mcMMOability = null;
 					for(Ability ability : Ability.values())

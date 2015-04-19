@@ -12,9 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 
-import com.moddamage.LogUtil;
-import com.moddamage.MDEvent;
-import com.moddamage.ModDamage;
+import com.moddamage.*;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.ScriptLine;
 import com.moddamage.backend.ScriptLineHandler;
@@ -52,17 +50,16 @@ public class Repeat extends MDEvent implements ScriptLineHandler
 		}
 	}
 
-	@Override
 	public ScriptLineHandler getLineHandler()
 	{
-		LogUtil.info("on " + name());
-		
+
 		return this;
 	}
 	
 	@Override
 	public ScriptLineHandler handleLine(ScriptLine line, boolean hasChildren)
 	{
+		LogUtil.info(line.origin, line, "on " + name());
 		String[] parts = line.line.split("\\s+");
 		String name = parts[0];
 		Class<?> type;
@@ -75,7 +72,7 @@ public class Repeat extends MDEvent implements ScriptLineHandler
 		else if (parts[1].equalsIgnoreCase("chunk"))
 			type = Chunk.class;
 		else {
-			LogUtil.error("Illegal repeat type: "+parts[1]);
+			LogUtil.error(line, "Illegal repeat type: "+parts[1]);
 			return null;
 		}
 
@@ -83,7 +80,7 @@ public class Repeat extends MDEvent implements ScriptLineHandler
 		RepeatInfo<?> repeat = new RepeatInfo(name, type);
 		repeatMap.get(repeat.repeatType).put(repeat.name, repeat);
 		
-		LogUtil.info("Repeat ["+repeat.name+" "+repeat.repeatType.getSimpleName()+"]");
+		LogUtil.info(line, "Repeat ["+repeat.name+" "+repeat.repeatType.getSimpleName()+"]");
 //		repeat.routines = RoutineAliaser.parseRoutines(entry.getValue(), repeat.myInfo);
 //		if (repeat.routines == null)
 //		{
@@ -207,14 +204,16 @@ public class Repeat extends MDEvent implements ScriptLineHandler
 
 		public class RepeatData implements Runnable
 		{
+			final LogHandle handle;
 			final T it;
 			int delay;
 			int count;
 
 			int taskId = -1;
 
-			public RepeatData(T it, int delay, int count)
+			public RepeatData(LogHandle handle, T it, int delay, int count)
 			{
+				this.handle = handle;
 				this.it = it;
 				this.delay = delay;
 				this.count = count;
@@ -277,7 +276,7 @@ public class Repeat extends MDEvent implements ScriptLineHandler
 				taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(ModDamage.getPluginConfiguration().plugin, this, delay);
 
 				if (taskId != -1) datas.put(it, this);
-				else LogUtil.warning_strong("Unable to start repeat task!");
+				else LogUtil.warning_strong(handle, "Unable to start repeat task!");
 			}
 
 			private void stop()
@@ -292,7 +291,7 @@ public class Repeat extends MDEvent implements ScriptLineHandler
 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void start(String name, Object it, int delay, int count) {
+	public static void start(LogHandle logHandle, String name, Object it, int delay, int count) {
 		Class<?> type;
 		if (it instanceof Entity)
 			type = Entity.class;
@@ -312,13 +311,13 @@ public class Repeat extends MDEvent implements ScriptLineHandler
 		RepeatInfo info = instance.repeatMap.get(type).get(name);
 		if (info == null) 
 		{
-			LogUtil.error("No Repeat named "+name);
+			LogUtil.error(logHandle, "No Repeat named "+name);
 			return;
 		}
 
-		RepeatInfo.RepeatData data = (RepeatData) info.datas.get(it);
+		RepeatData data = (RepeatData) info.datas.get(it);
 		if (data == null)
-			data = info.new RepeatData(it, delay, count);
+			data = info.new RepeatData(logHandle, it, delay, count);
 		else
 		{
 			data.delay = delay;

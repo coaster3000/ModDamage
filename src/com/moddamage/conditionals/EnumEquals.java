@@ -13,6 +13,7 @@ import com.moddamage.parsing.IDataParser;
 import com.moddamage.parsing.IDataProvider;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.matchables.Matchable;
@@ -62,10 +63,10 @@ public class EnumEquals extends Conditional<Enum>
 		DataProvider.register(Boolean.class, Enum.class, pattern, new IDataParser<Boolean, Enum>()
 			{
 				@Override
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<Enum> enumDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<Enum> enumDP, Matcher m, StringMatcher sm)
 				{
 					@SuppressWarnings("unchecked")
-					Map<String, Enum<?>> possibleTypes = Utils.getTypeMapForEnum(enumDP.provides(), true);
+					Map<String, ? extends Enum> possibleTypes = Utils.getTypeMapForEnum(enumDP.provides(), true);
 					
 					List<Enum> types = new ArrayList<Enum>();
 					
@@ -79,7 +80,7 @@ public class EnumEquals extends Conditional<Enum>
 								types.add(null);
 								continue;
 							}
-							LogUtil.error("Error: \"" + typeStr + "\" is not a valid " + enumDP.provides().getSimpleName());
+							LogUtil.error(scriptLine, "Error: \"" + typeStr + "\" is not a valid " + enumDP.provides().getSimpleName());
 							return null;
 						}
 						types.add(type);

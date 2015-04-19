@@ -1,24 +1,20 @@
 package com.moddamage.tags;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
-
-import com.moddamage.ModDamage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
-import org.yaml.snakeyaml.Yaml;
 
+import com.moddamage.Config.LoadState;
 import com.moddamage.LogUtil;
-import com.moddamage.PluginConfiguration.LoadState;
+import com.moddamage.ModDamage;
 
 public class TagManager
 {

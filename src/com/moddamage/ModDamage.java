@@ -16,7 +16,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.moddamage.MDLogger.DebugSetting;
-import com.moddamage.PluginConfiguration.LoadState;
 import com.moddamage.MDLogger.OutputPreset;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.ExternalPluginManager;
@@ -199,7 +198,7 @@ public class ModDamage extends JavaPlugin
 				if(player != null) configuration.printToLog(Level.INFO, "Reload initiated by user " + player.getName() + "...");
 				plugin.reload(reloadingAll);
 				if(player != null)
-					switch(LoadState.pluginState)
+					switch(configuration.getLoadState())
 					{
 						case SUCCESS:
 							int worstValue = configuration.getWorstLogMessageLevel().intValue();
@@ -225,7 +224,7 @@ public class ModDamage extends JavaPlugin
 							player.sendMessage(chatPrepend(ChatColor.GRAY) + "No configuration loaded! Are any routines defined?");
 							break;
 							
-						default: throw new Error("Unknown state: "+LoadState.pluginState+" $MD176");
+						default: throw new Error("Unknown state: "+ configuration.getLoadState()+" $MD209");
 					}
 			}
 		},
@@ -355,8 +354,10 @@ public class ModDamage extends JavaPlugin
 	public static void printToLog(Level level, String message) {
 		getPluginConfiguration().printToLog(level, message);
 	}
+	public static void printToLog(Level level, String message, Throwable thrown) { getPluginConfiguration().printToLog(level, message, thrown); }
 
 	public static DebugSetting getDebugSetting(){ return configuration.getDebugSetting(); }
+	public static void printToLog(BaseConfig config, Level level, String message) { config.printToLog(level, message); }
 
 	public static TagManager getTagger(){ return tagger; }
 

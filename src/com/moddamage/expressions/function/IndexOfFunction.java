@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import com.moddamage.LogUtil;
 import com.moddamage.StringMatcher;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.DataProvider;
@@ -47,17 +48,17 @@ public class IndexOfFunction extends DataProvider<Integer, String>
 		DataProvider.register(Integer.class, String.class, Pattern.compile("_(i)?indexOf\\("), new IDataParser<Integer, String>()
 			{
 				@Override
-				public IDataProvider<Integer> parse(EventInfo info, IDataProvider<String> stringDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Integer> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<String> stringDP, Matcher m, StringMatcher sm)
 				{
 					boolean caseInsensitive = (m.group(1) != null);
 					
-					IDataProvider<String> otherDP = DataProvider.parse(info, String.class, sm.spawn());
+					IDataProvider<String> otherDP = DataProvider.parse(scriptLine, info, String.class, sm.spawn());
 					if (otherDP == null) return null;
 
 					Matcher endMatcher = sm.matchFront(endPattern);
 					if (endMatcher == null)
 					{
-						LogUtil.error("Missing end paren: \"" + sm.string + "\"");
+						LogUtil.error(scriptLine, "Missing end paren: \"" + sm.string + "\"");
 						return null;
 					}
 

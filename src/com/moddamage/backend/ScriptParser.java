@@ -6,18 +6,19 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.regex.Pattern;
 
+import com.moddamage.ConfigScript;
 import com.moddamage.LogUtil;
 
 public class ScriptParser
 {
 	private LineNumberReader r;
-	
-	public ScriptParser(InputStream in)
+	private final ConfigScript script;
+
+	public ScriptParser(ConfigScript script, InputStream in)
 	{
+		this.script = script;
 		r = new LineNumberReader(new InputStreamReader(in));
 	}
-	
-	
 
 	private ScriptLine currentLine = null;
 	
@@ -58,7 +59,7 @@ public class ScriptParser
 			
 			if (hasChildren) {
 				if (nexth == null && h != null) {
-					LogUtil.warning(currentLine, "Unhandled child");
+					LogUtil.warning(script, currentLine, "Unhandled child");
 				}
 				
 				parseHelper(nexth);
@@ -82,7 +83,7 @@ public class ScriptParser
 	{
 		String line = r.readLine();
 		if (line == null) return null;
-		return new ScriptLine(line, r.getLineNumber());
+		return new ScriptLine(script, line, r.getLineNumber());
 	}
 	
 	Pattern indentPattern = Pattern.compile("^[ \t]*");

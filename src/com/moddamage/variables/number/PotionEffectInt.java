@@ -14,6 +14,7 @@ import com.moddamage.LogUtil;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.NumberExp;
@@ -47,12 +48,12 @@ public class PotionEffectInt extends NumberExp<LivingEntity>
 				new IDataParser<Number, LivingEntity>()
 				{
 					@Override
-					public IDataProvider<Number> parse(EventInfo info, IDataProvider<LivingEntity> livingDP, Matcher m, StringMatcher sm)
+					public IDataProvider<Number> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<LivingEntity> livingDP, Matcher m, StringMatcher sm)
 					{
 						PotionEffectType type = PotionEffectType.getByName(m.group(1).toUpperCase());
 						if (type == null)
 						{
-							LogUtil.error("Unknown potion effect type '"+m.group(1)+"'");
+							LogUtil.error(scriptLine, "Unknown potion effect type '"+m.group(1)+"'");
 							return null;
 						}
 						

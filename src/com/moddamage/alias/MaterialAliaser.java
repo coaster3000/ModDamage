@@ -5,11 +5,13 @@ import java.util.Collection;
 import org.bukkit.Material;
 
 import com.moddamage.alias.Aliaser.CollectionAliaser;
+import com.moddamage.backend.ScriptLine;
 
 public class MaterialAliaser extends CollectionAliaser<Material> 
 {
 	public static MaterialAliaser aliaser = new MaterialAliaser();
-	public static Collection<Material> match(String string) { return aliaser.matchAlias(string); }
+	public static Collection<Material> match(ScriptLine scriptLine) { return aliaser.matchAlias(scriptLine); }
+	public static Collection<Material> match(ScriptLine scriptLine, String string) { return aliaser.matchAlias(scriptLine, string); }
 	
 	public MaterialAliaser() { super(AliasManager.Material.name()); }
 

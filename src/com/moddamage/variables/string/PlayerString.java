@@ -9,6 +9,7 @@ import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.backend.ArmorSet;
 import com.moddamage.backend.ExternalPluginManager;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.StringExp;
@@ -119,7 +120,7 @@ public class PlayerString extends StringExp<Player>
 		DataProvider.register(String.class, Player.class, pattern, new IDataParser<String, Player>()
 			{
 				@Override
-				public IDataProvider<String> parse(EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
+				public IDataProvider<String> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
 				{
 					sm.accept();
 					return new PlayerString(playerDP, PlayerStringProperty.valueOf(m.group(1).toUpperCase()));

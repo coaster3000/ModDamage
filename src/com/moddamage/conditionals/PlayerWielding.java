@@ -12,6 +12,7 @@ import com.moddamage.Utils;
 import com.moddamage.alias.ItemAliaser;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.ModDamageItemStack;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.parsing.DataProvider;
@@ -54,9 +55,9 @@ public class PlayerWielding extends Conditional<Player>
 		DataProvider.register(Boolean.class, Player.class, pattern, new IDataParser<Boolean, Player>()
 			{
 				@Override
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
 				{
-					Collection<ModDamageItemStack> matchedItems = ItemAliaser.match(m.group(1), info);
+					Collection<ModDamageItemStack> matchedItems = ItemAliaser.match(scriptLine, m.group(1), info);
 					if(matchedItems == null || matchedItems.isEmpty()) return null;
 					
 					return new PlayerWielding(playerDP, matchedItems);

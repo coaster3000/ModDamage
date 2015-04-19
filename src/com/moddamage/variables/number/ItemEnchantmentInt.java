@@ -9,6 +9,7 @@ import com.moddamage.LogUtil;
 import com.moddamage.StringMatcher;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.ItemHolder;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.SettableIntegerExp;
@@ -23,12 +24,12 @@ public class ItemEnchantmentInt extends SettableIntegerExp<ItemHolder>
 		DataProvider.register(Integer.class, ItemHolder.class, Pattern.compile("_enchant(?:ment)?_?level_(\\w+)", Pattern.CASE_INSENSITIVE), new IDataParser<Integer, ItemHolder>()
 				{
 					@Override
-					public IDataProvider<Integer> parse(EventInfo info, IDataProvider<ItemHolder> itemDP, Matcher m, StringMatcher sm)
+					public IDataProvider<Integer> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<ItemHolder> itemDP, Matcher m, StringMatcher sm)
 					{
 						Enchantment enchantment = Enchantment.getByName(m.group(1).toUpperCase());
 						if (enchantment == null)
 						{
-							LogUtil.error("Unknown enchantment named \"" + m.group(1) + "\"");
+							LogUtil.error(scriptLine, "Unknown enchantment named \"" + m.group(1) + "\"");
 							return null;
 						}
 						return sm.acceptIf(new ItemEnchantmentInt(

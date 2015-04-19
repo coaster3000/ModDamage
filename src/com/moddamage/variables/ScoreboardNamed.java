@@ -8,6 +8,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import com.moddamage.Scoreboards;
 import com.moddamage.StringMatcher;
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.InterpolatedString;
@@ -26,9 +27,9 @@ public class ScoreboardNamed implements IDataProvider<Scoreboard>
 				new BaseDataParser<Scoreboard>()
 				{
 					@Override
-					public IDataProvider<Scoreboard> parse(EventInfo info, Matcher m, StringMatcher sm)
+					public IDataProvider<Scoreboard> parse(ScriptLine scriptLine, EventInfo info, Matcher m, StringMatcher sm)
 					{
-                        IDataProvider<String> nameDP = InterpolatedString.parseWord(word, sm.spawn(), info);
+                        IDataProvider<String> nameDP = InterpolatedString.parseWord(scriptLine, word, sm.spawn(), info);
                         if (nameDP == null) return null;
 
                         sm.accept();

@@ -3,21 +3,21 @@ package com.moddamage.external.mcMMO;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bukkit.entity.Player;
-
-import com.moddamage.parsing.DataProvider;
-import com.moddamage.parsing.IDataParser;
-import com.moddamage.parsing.IDataProvider;
+import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.moddamage.LogUtil;
 import com.moddamage.StringMatcher;
 import com.moddamage.Utils;
 import com.moddamage.backend.BailException;
 import com.moddamage.backend.ExternalPluginManager;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
 import com.moddamage.expressions.NumberExp;
-import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.moddamage.parsing.DataProvider;
+import com.moddamage.parsing.IDataParser;
+import com.moddamage.parsing.IDataProvider;
+import org.bukkit.entity.Player;
 
 public class PlayerSkillInt extends NumberExp<Player>
 {
@@ -28,7 +28,7 @@ public class PlayerSkillInt extends NumberExp<Player>
 				new IDataParser<Number, Player>()
 				{
 					@Override
-					public IDataProvider<Number> parse(EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
+					public IDataProvider<Number> parse(ScriptLine line, EventInfo info, IDataProvider<Player> playerDP, Matcher m, StringMatcher sm)
 					{
 						String skillPropStr = m.group(1);
 						String skillTypeStr = m.group(2).toUpperCase();

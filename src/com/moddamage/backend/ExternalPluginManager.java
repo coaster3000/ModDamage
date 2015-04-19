@@ -57,7 +57,7 @@ public class ExternalPluginManager
 
 	private static void reloadPluginExtensions()
 	{
-		String prefix = ModDamage.getPluginConfiguration().getLog().logPrepend();
+		String prefix = ModDamage.getPluginConfiguration().getLogger().logPrepend();
 		if (registeredPlugins.isEmpty())
 		{
 			LogUtil.info_verbose(prefix + "Extensions: No extensions found.");

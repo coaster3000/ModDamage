@@ -53,7 +53,7 @@ public class RepeatControl extends Routine
 		Number c = count.get(data);
 		if (del == null || c == null) return;
 		
-		Repeat.start(repeatName, it, del.intValue(), c.intValue());
+		Repeat.start(getScriptLine().origin, repeatName, it, del.intValue(), c.intValue());
 	}
 
 	public static void register()
@@ -71,13 +71,13 @@ public class RepeatControl extends Routine
 		public IRoutineBuilder getNew(Matcher matcher, ScriptLine scriptLine, EventInfo info)
 		{
 			@SuppressWarnings("rawtypes")
-			IDataProvider itDP = DataProvider.parse(info, Entity.class, matcher.group(1), true, false);
+			IDataProvider itDP = DataProvider.parse(scriptLine, info, Entity.class, matcher.group(1), true, false);
 			if (itDP == null)
-				itDP = DataProvider.parse(info, Location.class, matcher.group(1), true, false);
+				itDP = DataProvider.parse(scriptLine, info, Location.class, matcher.group(1), true, false);
 			if (itDP == null)
-				itDP = DataProvider.parse(info, Chunk.class, matcher.group(1), true, false);
+				itDP = DataProvider.parse(scriptLine, info, Chunk.class, matcher.group(1), true, false);
 			if (itDP == null)
-				itDP = DataProvider.parse(info, World.class, matcher.group(1), true, false);
+				itDP = DataProvider.parse(scriptLine, info, World.class, matcher.group(1), true, false);
 			if (itDP == null) return null;
 			
 			IDataProvider<? extends Number> delay, count;
@@ -89,7 +89,7 @@ public class RepeatControl extends Routine
 				repeatName = matcher.group(4);
 				if (repeatName == null)
 				{
-					LogUtil.error("No repeat name?");
+					LogUtil.error(scriptLine, "No repeat name?");
 					return null;
 				}
 				
@@ -99,10 +99,10 @@ public class RepeatControl extends Routine
 			else
 			{
 				StringMatcher sm = new StringMatcher(matcher.group(3));
-				delay = DataProvider.parse(info, Integer.class, sm.spawn()); if (delay == null) return null;
+				delay = DataProvider.parse(scriptLine, info, Integer.class, sm.spawn()); if (delay == null) return null;
 				if (sm.matchesFront(dotPattern))
 				{
-					count = DataProvider.parse(info, Integer.class, sm.spawn()); if (count == null) return null;
+					count = DataProvider.parse(scriptLine, info, Integer.class, sm.spawn()); if (count == null) return null;
 				}
 				else
 					count = new LiteralNumber(-1);
@@ -110,9 +110,9 @@ public class RepeatControl extends Routine
 			}
 			
 			if (delay != null)
-				LogUtil.info("Start Repeat: on " + itDP + " named \""+repeatName+"\" delay " + delay + " count " + count);
+				LogUtil.info(scriptLine.origin, "Start Repeat: on " + itDP + " named \""+repeatName+"\" delay " + delay + " count " + count);
 			else
-				LogUtil.info("Stop Repeat: on " + itDP + " named \""+repeatName+"\"");
+				LogUtil.info(scriptLine.origin, "Stop Repeat: on " + itDP + " named \""+repeatName+"\"");
 			return new RoutineBuilder(new RepeatControl(scriptLine, itDP, repeatName, delay, count));
 		}
 	}

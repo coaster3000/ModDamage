@@ -4,13 +4,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.moddamage.backend.BailException;
+import com.moddamage.backend.ScriptLine;
 import com.moddamage.expressions.InterpolatedString;
 import com.moddamage.parsing.DataProvider;
 import com.moddamage.parsing.IDataParser;
 import com.moddamage.parsing.IDataProvider;
 import com.moddamage.tags.Tag;
 import com.moddamage.tags.Taggable;
-
 import com.moddamage.StringMatcher;
 import com.moddamage.eventinfo.EventData;
 import com.moddamage.eventinfo.EventInfo;
@@ -44,9 +44,9 @@ public class IsTagged<T> extends Conditional<T>
 			{
 				@Override
                 @SuppressWarnings({ "unchecked", "rawtypes" })
-				public IDataProvider<Boolean> parse(EventInfo info, IDataProvider<Object> objDP, Matcher m, StringMatcher sm)
+				public IDataProvider<Boolean> parse(ScriptLine scriptLine, EventInfo info, IDataProvider<Object> objDP, Matcher m, StringMatcher sm)
 				{
-                    Tag<?> tag = Tag.get(InterpolatedString.parseWord(InterpolatedString.word, sm.spawn(), info), m.group(1));
+                    Tag<?> tag = Tag.get(InterpolatedString.parseWord(scriptLine, InterpolatedString.word, sm.spawn(), info), m.group(1));
                     Taggable<?> taggable = Taggable.get(objDP, info);
                     if (tag == null || taggable == null) return null;
 
