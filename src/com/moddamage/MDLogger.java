@@ -2,11 +2,7 @@ package com.moddamage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
@@ -64,24 +60,46 @@ public class MDLogger {
 	public int maxLogMessagesToShow = 50;
 	
 	private Formatter formatter;
+	private static final int levelLen = 10;
 	
 	public MDLogger(final Config config)
 	{
 		this.plugin = config.getPlugin();
-		log = plugin.getLogger();
+		log = Logger.getLogger(config.getName());
+		log.setUseParentHandlers(false);
+
+		for (Handler h :log.getHandlers())
+			log.removeHandler(h); //Cleanup
+
+		ConsoleHandler consoleHandler = new ConsoleHandler();
 		formatter = new Formatter() {
 			@Override
 			public String format(LogRecord record) {
-				StringBuilder b = new StringBuilder().append('[').append(config.getName()).append("] [").append(String.format("%1$-10s", record.getLevel().toString())).append("] ");
+				StringBuilder sb = new StringBuilder().append('[').append(config.getName()).append("] [");
+				String level = record.getLevel().toString();
+				if (level.length() > levelLen) level = level.substring(0,levelLen/2) + "..";
+
+				int llv = Math.abs(levelLen - level.length()); //Level Length value
+
+				if (llv > 0) llv = llv/2;
+
+				for (int i = 0; i < llv; i++) sb.append(" ");
+				sb.append(record.getLevel().toString());
+				for (int i = 0; i < llv; i++) sb.append(" ");
+
+				sb.append("] ");
 				String name = plugin.getDescription().getPrefix();
 				if (name == null)
 					name = plugin.getName();
 				
 				String pat = "\\[" + name + "\\] ";
-				b.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).append(Config.newline).toString(); //StringBuilder is much more effecient then string concat.
-				return b.toString();
+				sb.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).toString(); //StringBuilder is much more effecient then string concat.
+				return sb.toString();
 			}
 		};
+
+		consoleHandler.setFormatter(formatter);
+		log.addHandler(consoleHandler);
 	}
 	
 	public void addToLogRecord(OutputPreset preset, ScriptLine line, String message)
