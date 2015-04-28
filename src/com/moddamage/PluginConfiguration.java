@@ -147,6 +147,20 @@ public class PluginConfiguration extends BaseConfigScript
 			else if (name.equals("server-password")) {
 				serverPassword = value;
 			}
+			else if (name.equals("priority")) {
+				try {
+					setPriority(Integer.parseInt(value));
+				} catch (NumberFormatException e) {
+					setPriority(-1);
+				}
+			}
+			else if (name.equals("enabled")){
+				try {
+					setEnabled(Boolean.parseBoolean(value));
+				} catch (Exception e) {
+					setEnabled(true);
+				}
+			}
 			else {
 				LogUtil.error(PluginConfiguration.this, line, "Unknown setting: " + m.group(1));
 			}
