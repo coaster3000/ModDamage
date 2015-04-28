@@ -25,7 +25,12 @@ public class ScriptParser
 	public void parseScript(ScriptLineHandler h) throws IOException
 	{
 		currentLine = readLine();
-		
+		if (currentLine == null)
+		{
+			LogUtil.error("Your file is empty!");
+			throw new FileNotFoundException();
+		}
+
 		parseHelper(h);
 	}
 
