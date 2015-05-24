@@ -94,8 +94,8 @@ public class MDLogger {
 				
 				String pat = "\\[" + name + "\\] ";
 				record.setMessage(record.getMessage().replaceFirst(pat, ""));
-				b.append(formatMessage(record)).toString(); //StringBuilder is much more effecient then string concat.
-				return b.toString();
+				sb.append(formatMessage(record)).toString(); //StringBuilder is much more effecient then string concat.
+				return sb.toString();
 			}
 		};
 
