@@ -93,8 +93,9 @@ public class MDLogger {
 					name = plugin.getName();
 				
 				String pat = "\\[" + name + "\\] ";
-				sb.append(String.format(record.getMessage().replaceFirst(pat, ""), record.getParameters())).toString(); //StringBuilder is much more effecient then string concat.
-				return sb.toString();
+				record.setMessage(record.getMessage().replaceFirst(pat, ""));
+				b.append(formatMessage(record)).toString(); //StringBuilder is much more effecient then string concat.
+				return b.toString();
 			}
 		};
 
