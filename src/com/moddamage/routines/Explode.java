@@ -54,7 +54,7 @@ public class Explode extends Routine
 			IDataProvider<Number> strength = DataProvider.parse(scriptLine, info, Number.class, matcher.group(2));
 			if(strength == null) return null;
 
-			LogUtil.info("Explode at " + locDP + " with strength " + strength);
+			LogUtil.info(scriptLine, "Explode at " + locDP + " with strength " + strength);
 
 			return new RoutineBuilder(new Explode(scriptLine, locDP, strength, matcher.group(2) != null));
 		}

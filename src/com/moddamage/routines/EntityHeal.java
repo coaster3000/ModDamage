@@ -55,7 +55,7 @@ public class EntityHeal extends Routine
 			IDataProvider<Number> heal_amount = DataProvider.parse(scriptLine, info, Number.class, matcher.group(2));
             if (heal_amount == null) return null;
 
-            LogUtil.info("Heal "+livingDP+" by "+heal_amount);
+            LogUtil.info(scriptLine, "Heal "+livingDP+" by "+heal_amount);
 
 			return new RoutineBuilder(new EntityHeal(scriptLine, livingDP, heal_amount));
 		}

@@ -92,7 +92,7 @@ public class Knockback extends NestedRoutine
 				}
 			}
 
-            LogUtil.info("KnockBack " + entityDP + " from " + fromDP);
+            LogUtil.info(scriptLine, "KnockBack " + entityDP + " from " + fromDP);
 
 			Knockback routine = new Knockback(scriptLine, entityDP, fromDP);
 			return new NestedRoutineBuilder(routine, routine.routines, info.chain(myInfo));

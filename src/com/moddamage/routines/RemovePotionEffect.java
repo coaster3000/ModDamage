@@ -51,11 +51,11 @@ public class RemovePotionEffect extends Routine
 			PotionEffectType type = PotionEffectType.getByName(matcher.group(2).toUpperCase());
 			if (type == null)
 			{
-				LogUtil.error("Unknown potion effect type '"+matcher.group(2)+"'");
+				LogUtil.error(scriptLine, "Unknown potion effect type '"+matcher.group(2)+"'");
 				return null;
 			}
 			
-			LogUtil.info("RemovePotionEffect: from " + livingDP + ", " + type.getName());
+			LogUtil.info(scriptLine, "RemovePotionEffect: from " + livingDP + ", " + type.getName());
 			return new RoutineBuilder(new RemovePotionEffect(scriptLine, livingDP, type));
 		}
 	}

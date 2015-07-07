@@ -39,7 +39,7 @@ public class InterpolatedString implements IDataProvider<String>
 			
 			IDataProvider<String> match = DataProvider.parse(scriptLine, info, String.class, sm.spawn(), false, true, interpolationEndPattern);
 			if(match == null) {
-               LogUtil.warning_strong("String expression not matched!");
+               LogUtil.warning_strong(scriptLine, "String expression not matched!");
                 addPart(start.group());
                 continue;
             }

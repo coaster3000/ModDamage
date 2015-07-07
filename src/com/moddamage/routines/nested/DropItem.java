@@ -106,7 +106,7 @@ public class DropItem extends NestedRoutine
 
             if (quantity == null) return null;
 
-            LogUtil.info("Drop item at " + locationDP + ": " + items);
+            LogUtil.info(scriptLine, "Drop item at " + locationDP + ": " + items);
 			
 			DropItem routine = new DropItem(scriptLine, locationDP, items, quantity);
 			return new NestedRoutineBuilder(routine, routine.routines, info.chain(myInfo));

@@ -90,7 +90,7 @@ public class Teleport extends Routine
 				yaw_pitch = ", "+yaw+", "+pitch;
 			}
 			
-			LogUtil.info("Teleport: " + entityDP + " to " + locDP + yaw_pitch);
+			LogUtil.info(scriptLine, "Teleport: " + entityDP + " to " + locDP + yaw_pitch);
 			return new RoutineBuilder(new Teleport(scriptLine, entityDP, locDP, yaw, pitch));
 		}
 	}

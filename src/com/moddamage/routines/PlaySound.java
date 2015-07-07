@@ -78,8 +78,8 @@ public class PlaySound extends Routine
             IDataProvider<Integer> pitchDP = DataProvider.parse(scriptLine, info, Integer.class, matcher.group(5));
             if (volumeDP == null || pitchDP == null) return null;
 			
-            LogUtil.info("PlaySound: " + sound + " for:" + playerDP + " at:" + locDP + " volume:" + volumeDP + " pitch:" + pitchDP);
-			return new RoutineBuilder(new PlaySound(scriptLine, playerDP, locDP, sound, volumeDP, pitchDP));
+            LogUtil.info(scriptLine, "PlaySound: " + ((sound != null) ? sound : soundString) + " for:" + playerDP + " at:" + locDP + " volume:" + volumeDP + " pitch:" + pitchDP);
+			return new RoutineBuilder(new PlaySound(scriptLine, playerDP, locDP, sound, soundString, volumeDP, pitchDP));
 		}
 	}
 }

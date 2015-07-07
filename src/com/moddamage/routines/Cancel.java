@@ -44,7 +44,7 @@ public class Cancel extends NestedRoutine
 				return null;
 			}
 			
-			LogUtil.info("Cancel");
+			LogUtil.info(scriptLine, "Cancel");
 			return new RoutineBuilder(new Cancel(scriptLine, cancelDP));
 		}
 	}

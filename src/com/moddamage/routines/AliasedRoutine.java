@@ -54,7 +54,7 @@ public class AliasedRoutine extends Routine
 				LogUtil.error("Invalid routine alias: \"" + alias + "\"");
 				return null;
 			}*/
-			LogUtil.info("Routine Alias: \"" + alias + "\"");
+			LogUtil.info(scriptLine, "Routine Alias: \"" + alias + "\"");
 			return new RoutineBuilder(new AliasedRoutine(scriptLine, info, alias));
 		}
 	}

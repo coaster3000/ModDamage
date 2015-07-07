@@ -47,7 +47,7 @@ public class ClearTab extends NestedRoutine
 			IDataProvider<Player> playerDP = DataProvider.parse(scriptLine, info, Player.class, m.group(1));
 			if(playerDP == null) return null;
 			
-			LogUtil.info("ClearTab: " + playerDP);
+			LogUtil.info(scriptLine, "ClearTab: " + playerDP);
 			
 			return new RoutineBuilder(new ClearTab(scriptLine, playerDP));
 		}

@@ -63,13 +63,13 @@ public class Spawn extends NestedRoutine
 			if (spawnType == null) return null;
 			if (!spawnType.canSpawn())
 			{
-				LogUtil.error("Cannot spawn "+matcher.group(2));
+				LogUtil.error(scriptLine, "Cannot spawn "+matcher.group(2));
 				return null;
 			}
 			IDataProvider<Location> locDP = DataProvider.parse(scriptLine, info, Location.class, matcher.group(1));
             if (locDP == null) return null;
 
-            LogUtil.info("Spawn "+spawnType+" at "+locDP);
+            LogUtil.info(scriptLine, "Spawn "+spawnType+" at "+locDP);
 
 			EventInfo einfo = info.chain(myInfo);
 

@@ -61,7 +61,7 @@ public class Untag<T, D> extends Routine
             Tag<?> tag = Tag.get(tagNameDP, matcher.group(1));
             if (tag == null) return null;
 
-			LogUtil.info("Un"+matcher.group(1)+"tag: \"" + tag + "\" on " + taggable);
+			LogUtil.info(scriptLine, "Un"+matcher.group(1)+"tag: \"" + tag + "\" on " + taggable);
 			return new RoutineBuilder(new Untag(scriptLine, tag, taggable));
 		}
 	}

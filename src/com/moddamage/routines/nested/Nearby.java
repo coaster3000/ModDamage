@@ -102,7 +102,7 @@ public class Nearby extends NestedRoutine
 			EntityType element = EntityType.getElementNamed(matcher.group(3)); if (element == null) return null;
 			IDataProvider<Integer> radius = DataProvider.parse(scriptLine, info, Integer.class, matcher.group(4)); if (radius == null) return null;
 
-			LogUtil.info("Near" + (nearest? "est" : "by") + ": " + entityDP + ", " + element + ", " + radius);
+			LogUtil.info(scriptLine, "Near" + (nearest? "est" : "by") + ": " + entityDP + ", " + element + ", " + radius);
 
 			EventInfo einfo = info.chain(myInfo);
 			

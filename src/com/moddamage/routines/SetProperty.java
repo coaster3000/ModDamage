@@ -118,7 +118,7 @@ public class SetProperty extends Routine
 				}
 			}
 
-			LogUtil.info("Set "+propertyDP+" to " + valueDP);
+			LogUtil.info(scriptLine, "Set "+propertyDP+" to " + valueDP);
 			
 
 			return new RoutineBuilder(new SetProperty(scriptLine, propertyDP, valueDP));

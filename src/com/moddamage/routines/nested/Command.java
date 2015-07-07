@@ -111,18 +111,18 @@ public class Command extends NestedRoutine
 			Collection<IDataProvider<String>> commands = CommandAliaser.match(scriptLine, matcher.group(2), info);
 			if (commands == null)
 			{
-				LogUtil.error("This command form can only be used for command aliases. Please use the following instead.");
-				LogUtil.error("    - 'command."+matcher.group(1)+"': '" + matcher.group(2) + "'");
+				LogUtil.error(scriptLine, "This command form can only be used for command aliases. Please use the following instead.");
+				LogUtil.error(scriptLine, "    - 'command."+matcher.group(1)+"': '" + matcher.group(2) + "'");
 				return null;
 			}
 			
 			
 			Command routine = new Command(scriptLine, commandTarget, commands);
-			LogUtil.info("Command (" + commandTarget + "):" );
+			LogUtil.info(scriptLine, "Command (" + commandTarget + "):" );
 			ModDamage.changeIndentation(true);
 			for (IDataProvider<String> cmd : commands)
 			{
-				LogUtil.info(cmd.toString());
+				LogUtil.info(scriptLine, cmd.toString());
 			}
 			ModDamage.changeIndentation(false);
 			return new RoutineBuilder(routine);
@@ -138,7 +138,7 @@ public class Command extends NestedRoutine
 			if(commandTarget == null) return null;
 			
 
-			LogUtil.info("Command (" + commandTarget + "):" );
+			LogUtil.info(scriptLine, "Command (" + commandTarget + "):" );
 			ModDamage.changeIndentation(true);
 			
 			CommandRoutineBuilder builder = new CommandRoutineBuilder(scriptLine, commandTarget, info);
@@ -170,7 +170,7 @@ public class Command extends NestedRoutine
 			IDataProvider<String> cmdDP = DataProvider.parse(scriptLine, info, String.class, str);
 			if (cmdDP != null) {
 				commands.add(cmdDP);
-				LogUtil.info(cmdDP.toString());
+				LogUtil.info(scriptLine, cmdDP.toString());
 			}
 		}
 

@@ -47,7 +47,7 @@ public class UpdateTab extends NestedRoutine
 			IDataProvider<Player> playerDP = DataProvider.parse(scriptLine, info, Player.class, m.group(1));
 			if(playerDP == null) return null;
 			
-			LogUtil.info("UpdateTab: " + playerDP);
+			LogUtil.info(scriptLine, "UpdateTab: " + playerDP);
 			
 			return new RoutineBuilder(new UpdateTab(scriptLine, playerDP));
 		}

@@ -58,7 +58,7 @@ public class PlayerChat extends Routine
 			if(playerDP == null) return null;
 
 
-			LogUtil.info("Chat (" + playerDP + "):" );
+			LogUtil.info(scriptLine, "Chat (" + playerDP + "):" );
 			ModDamage.changeIndentation(true);
 			
 			ChatRoutineBuilder builder = new ChatRoutineBuilder(scriptLine, playerDP, info);
@@ -93,7 +93,7 @@ public class PlayerChat extends Routine
 					((LiteralString) msgDP).colorize();
 				}
 				messages.add(msgDP);
-				LogUtil.info(msgDP.toString());
+				LogUtil.info(scriptLine, msgDP.toString());
 			}
 		}
 

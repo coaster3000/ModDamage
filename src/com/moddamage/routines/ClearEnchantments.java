@@ -45,7 +45,7 @@ public class ClearEnchantments extends Routine
 			IDataProvider<EnchantmentsRef> enchantmentsDP = DataProvider.parse(scriptLine, info, EnchantmentsRef.class, "enchantments");
 			if(enchantmentsDP == null) return null;
 			
-			LogUtil.info("Clear Enchantments");
+			LogUtil.info(scriptLine, "Clear Enchantments");
 			return new RoutineBuilder(new ClearEnchantments(scriptLine, enchantmentsDP));
 		}
 	}

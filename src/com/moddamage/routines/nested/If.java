@@ -71,7 +71,7 @@ public class If extends NestedRoutine
 				conditional = null;
 			}
 			
-			LogUtil.info((isElse? "Else " : "") + (matcher.group(3) != null? "" : ("If: " + conditional)));
+			LogUtil.info(scriptLine, (isElse? "Else " : "") + (matcher.group(3) != null? "" : ("If: " + conditional)));
 			
 			
 			If routine = new If(scriptLine, isElse, conditional);

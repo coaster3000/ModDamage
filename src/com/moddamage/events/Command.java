@@ -85,7 +85,7 @@ public class Command extends MDEvent implements ScriptLineHandler
 		{				
 			Argument arg = Argument.get(commandSpec[i]);
 			if (arg == null) {
-				LogUtil.error(
+				LogUtil.error(line,
 						"Please prefix command arguments with # for number, & for player, % for any word, or [a-z] for a specific word, not "
 						+commandSpec[i].substring(0, 1));
 //				failed = true;

@@ -56,7 +56,7 @@ public class SetTabPriority extends Routine
 			IDataProvider<Integer> priorityDP = DataProvider.parse(scriptLine, info, Integer.class, m.group(2)); if (priorityDP == null) return null;
 			
 
-			LogUtil.info("SetTabPriority: " + playerDP + ": " + priorityDP);
+			LogUtil.info(scriptLine, "SetTabPriority: " + playerDP + ": " + priorityDP);
 			
 			return new RoutineBuilder(new SetTabPriority(scriptLine, playerDP, priorityDP));
 		}

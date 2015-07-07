@@ -90,7 +90,7 @@ public class LogMessage extends NestedRoutine
 			if (logNameDP == null) return null;
 
 			
-			LogUtil.info("Log (" + logNameDP + "):" );
+			LogUtil.info(scriptLine, "Log (" + logNameDP + "):" );
 			ModDamage.changeIndentation(true);
 			
 			MessageRoutineBuilder builder = new MessageRoutineBuilder(scriptLine, logNameDP, info);
@@ -124,7 +124,7 @@ public class LogMessage extends NestedRoutine
 			IDataProvider<String> msgDP = DataProvider.parse(scriptLine, info, String.class, str);
 			if (msgDP != null) {
 				messages.add(msgDP);
-				LogUtil.info(msgDP.toString());
+				LogUtil.info(scriptLine ,msgDP.toString());
 			}
 		}
 

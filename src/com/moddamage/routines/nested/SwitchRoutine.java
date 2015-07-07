@@ -136,7 +136,7 @@ public class SwitchRoutine extends NestedRoutine
 			switchCases.add(matchedCase);
 			switchRoutines.add(routines);
 			
-			LogUtil.info(" case " + matchedCase + ":");
+			LogUtil.info(scriptLine, " case " + matchedCase + ":");
 			
 			return routines.getLineHandler(info);
 		}

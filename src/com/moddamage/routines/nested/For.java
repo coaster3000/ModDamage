@@ -113,7 +113,7 @@ public class For extends NestedRoutine
 
 			EventInfo myInfo = info.chain(new SimpleEventInfo(Number.class, name));
 
-			LogUtil.info("For " + name + " from " + fromDP + " to " + toDP + " by " + byDP);
+			LogUtil.info(scriptLine, "For " + name + " from " + fromDP + " to " + toDP + " by " + byDP);
 
 			For routine = new For(scriptLine, fromDP, toDP, byDP, myInfo);
 			return new NestedRoutineBuilder(routine, routine.routines, myInfo);

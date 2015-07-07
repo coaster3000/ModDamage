@@ -133,7 +133,7 @@ public class EntityItemAction extends NestedRoutine
             if (quantity == null) return null;
 
 
-            LogUtil.info(action.charAt(0) + action.substring(1).toLowerCase() + " at/to " + humanDP + ": " + items);
+            LogUtil.info(scriptLine, action.charAt(0) + action.substring(1).toLowerCase() + " at/to " + humanDP + ": " + items);
 			
 			EntityItemAction routine = new EntityItemAction(scriptLine, humanDP, ItemAction.valueOf(action), items, quantity);
 			return new NestedRoutineBuilder(routine, routine.routines, info.chain(myInfo));

@@ -48,7 +48,7 @@ public abstract class SettableDataProvider<T, S> extends DataProvider<T, S> impl
 		
 		if (!(dp instanceof ISettableDataProvider) || !((ISettableDataProvider<?>)dp).isSettable())
 		{
-			LogUtil.error(dp+" is not settable");
+			LogUtil.error(scriptLine, dp+" is not settable");
 			return null;
 		}
 		return (ISettableDataProvider<T>) dp;

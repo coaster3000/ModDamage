@@ -95,7 +95,7 @@ public class With extends NestedRoutine
 
 			EventInfo myInfo = info.chain(new SimpleEventInfo(infos.toArray(), true));
 
-			LogUtil.info("With: " + logSb.toString());
+			LogUtil.info(scriptLine, "With: " + logSb.toString());
 
 			With routine = new With(scriptLine, dps, myInfo);
 			return new NestedRoutineBuilder(routine, routine.routines, myInfo);

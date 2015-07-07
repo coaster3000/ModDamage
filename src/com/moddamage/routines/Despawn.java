@@ -44,7 +44,7 @@ public class Despawn extends Routine
 			IDataProvider<Entity> entityDP = DataProvider.parse(scriptLine, info, Entity.class, matcher.group(1));
 			if (entityDP == null) return null;
 			
-			LogUtil.info("Despawn: " + entityDP);
+			LogUtil.info(scriptLine, "Despawn: " + entityDP);
 			return new RoutineBuilder(new Despawn(scriptLine, entityDP));
 		}
 	}

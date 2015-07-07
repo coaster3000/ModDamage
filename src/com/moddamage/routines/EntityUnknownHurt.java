@@ -59,7 +59,7 @@ public class EntityUnknownHurt extends Routine
 			IDataProvider<Number> hurt_amount = DataProvider.parse(scriptLine, info, Number.class, matcher.group(2));
             if (hurt_amount == null) return null;
             
-            LogUtil.info("UnknownHurt " + livingDP + " by " + hurt_amount);
+            LogUtil.info(scriptLine, "UnknownHurt " + livingDP + " by " + hurt_amount);
 
 			return new RoutineBuilder(new EntityUnknownHurt(scriptLine, livingDP, hurt_amount));
 		}

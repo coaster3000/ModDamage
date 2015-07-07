@@ -75,7 +75,7 @@ public class AddPotionEffect extends Routine
 			IDataProvider<Integer> amplifier = DataProvider.parse(scriptLine, info, Integer.class, sm.spawn()); if (amplifier == null) return null;
 			if (!sm.isEmpty()) return null;
 			
-			LogUtil.info("AddPotionEffect: to " + livingDP + ", " + type.getName() + ", " + duration + ", " + amplifier);
+			LogUtil.info(scriptLine, "AddPotionEffect: to " + livingDP + ", " + type.getName() + ", " + duration + ", " + amplifier);
 			return new RoutineBuilder(new AddPotionEffect(scriptLine, livingDP, type, duration, amplifier));
 		}
 	}

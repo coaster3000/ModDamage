@@ -58,7 +58,7 @@ public class PlayEntityEffect extends Routine
 				return null;
 			}
 			
-			LogUtil.info("PlayEntityEffect: " + entityDP + " " + effectType);
+			LogUtil.info(scriptLine, "PlayEntityEffect: " + entityDP + " " + effectType);
 			return new RoutineBuilder(new PlayEntityEffect(scriptLine, entityDP, effectType));
 		}
 	}

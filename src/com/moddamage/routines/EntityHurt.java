@@ -95,7 +95,7 @@ public class EntityHurt extends Routine
 			if (hurt_amount == null) return null;
 			
 			
-			LogUtil.info("Hurt "+livingDP + (matcher.group(2) != null? " from " + entityOtherDP : "") + " by " + hurt_amount);
+			LogUtil.info(scriptLine, "Hurt "+livingDP + (matcher.group(2) != null? " from " + entityOtherDP : "") + " by " + hurt_amount);
 
 			return new RoutineBuilder(new EntityHurt(scriptLine, livingDP, entityOtherDP, hurt_amount));
 		}

@@ -30,7 +30,7 @@ public class Delay extends NestedRoutine
 		if (del == null) return;
 		
 		DelayedRunnable dr = new DelayedRunnable(data.clone());
-		Bukkit.getScheduler().scheduleSyncDelayedTask(ModDamage.getPluginConfiguration().plugin, dr, del);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(ModDamage.getInstance(), dr, del);
 	}
 		
 	public static void register(){ NestedRoutine.registerRoutine(delayPattern, new RoutineFactory()); }
@@ -43,7 +43,7 @@ public class Delay extends NestedRoutine
 
 			IDataProvider<Integer> numberMatch = DataProvider.parse(scriptLine, info, Integer.class, matcher.group(1));
 			
-			LogUtil.info("Delay: \"" + numberMatch + "\"");
+			LogUtil.info(scriptLine, "Delay: \"" + numberMatch + "\"");
 			if (numberMatch == null) return null;
 
 			Delay routine = new Delay(scriptLine, numberMatch);

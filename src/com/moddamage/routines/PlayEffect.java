@@ -95,7 +95,7 @@ public class PlayEffect extends Routine
 			}
 			catch (IllegalArgumentException e)
 			{
-				LogUtil.error("Bad effect type: \""+matcher.group(2)+"\"");
+				LogUtil.error(scriptLine, "Bad effect type: \""+matcher.group(2)+"\"");
 				return null;
 			}
 			IDataProvider<? extends Number> data;
@@ -109,7 +109,7 @@ public class PlayEffect extends Routine
 					
 					if (data == null)
 					{
-						LogUtil.error("Bad extra data: \""+matcher.group(3)+"\" for " + effectType + " effect.");
+						LogUtil.error(scriptLine, "Bad extra data: \""+matcher.group(3)+"\" for " + effectType + " effect.");
 						return null;
 					}
 				}
@@ -123,12 +123,12 @@ public class PlayEffect extends Routine
 				radius = DataProvider.parse(scriptLine, info, Integer.class, matcher.group(4));
 				if (radius == null)
 				{
-					LogUtil.error("Unable to match expression: \""+matcher.group(4)+"\"");
+					LogUtil.error(scriptLine, "Unable to match expression: \""+matcher.group(4)+"\"");
 					return null;
 				}
 			}
 			
-			LogUtil.info("PlayEffect: " + locDP + " " + effectType + " " + data + (radius != null? " " + radius : ""));
+			LogUtil.info(scriptLine, "PlayEffect: " + locDP + " " + effectType + " " + data + (radius != null? " " + radius : ""));
 			return new RoutineBuilder(new PlayEffect(scriptLine, locDP, effectType, data, radius));
 		}
 	}

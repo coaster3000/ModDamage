@@ -61,7 +61,7 @@ public class Foreach extends NestedRoutine
 
 			EventInfo myInfo = info.chain(new SimpleEventInfo(alistDP.providesElement(), name));
 
-			LogUtil.info("Foreach " + listDP + " as " + name);
+			LogUtil.info(scriptLine, "Foreach " + listDP + " as " + name);
 
 			Foreach routine = new Foreach(scriptLine, listDP, myInfo);
 			return new NestedRoutineBuilder(routine, routine.routines, myInfo);

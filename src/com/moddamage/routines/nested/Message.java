@@ -168,18 +168,18 @@ public class Message extends Routine
 				
 				
 				Message routine = new Message(scriptLine, messageTarget, messages);
-				LogUtil.info("Message (" + messageTarget + "):" );
+				LogUtil.info(scriptLine, "Message (" + messageTarget + "):" );
 				ModDamage.changeIndentation(true);
 				for (IDataProvider<String> msg : messages)
 				{
-					LogUtil.info(msg.toString());
+					LogUtil.info(scriptLine, msg.toString());
 				}
 				ModDamage.changeIndentation(false);
 				return new RoutineBuilder(routine);
 			}
 			
 
-			LogUtil.info("Message (" + messageTarget + "):" );
+			LogUtil.info(scriptLine, "Message (" + messageTarget + "):" );
 			ModDamage.changeIndentation(true);
 			
 			MessageRoutineBuilder builder = new MessageRoutineBuilder(scriptLine, messageTarget, info);
@@ -215,7 +215,7 @@ public class Message extends Routine
 					((LiteralString) msgDP).colorize();
 				}
 				messages.add(msgDP);
-				LogUtil.info(msgDP.toString());
+				LogUtil.info(scriptLine, msgDP.toString());
 			}
 		}
 

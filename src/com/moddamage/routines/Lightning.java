@@ -52,7 +52,7 @@ public class Lightning extends Routine
 
             boolean effect = matcher.group(2) != null;
 			
-            LogUtil.info("Lightning"+(effect?" effect":"")+" at " + locDP);
+            LogUtil.info(scriptLine, "Lightning"+(effect?" effect":"")+" at " + locDP);
 			return new RoutineBuilder(new Lightning(scriptLine, locDP, effect));
 		}
 	}

@@ -108,10 +108,10 @@ public class RoutineAliaser extends Aliaser<ScriptCapturedLines, ScriptCapturedL
 		ScriptCapturedLines lines = getAlias(alias);
 		if (lines == null)
 		{
-			LogUtil.error("Unknown alias: \"" + alias + "\"");
+			LogUtil.error(scriptLine, "Unknown alias: \"" + alias + "\"");
 			return null;
 		}
-		LogUtil.info("Routines in " + alias);
+		LogUtil.info(scriptLine, "Routines in " + alias);
 		
 		isParsingAlias = true;
 		

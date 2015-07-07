@@ -86,7 +86,7 @@ public class SetTabString extends Routine
 			IDataProvider<String> istr = DataProvider.parse(scriptLine, info, String.class, m.group(3));
 			
 
-			LogUtil.info("SetTabString: " + playerDP + " " + xDP + ", " + yDP + (pingDP == null? "" : (", " + pingDP)) + ": " + istr);
+			LogUtil.info(scriptLine, "SetTabString: " + playerDP + " " + xDP + ", " + yDP + (pingDP == null? "" : (", " + pingDP)) + ": " + istr);
 			
 			return new RoutineBuilder(new SetTabString(scriptLine, playerDP, xDP, yDP, pingDP, istr));
 		}

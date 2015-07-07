@@ -108,7 +108,7 @@ public class AbilityConditional extends Conditional<Player>
 							mcMMOability = ability;
 					if(mcMMOability == null)
 					{
-						LogUtil.error("Invalid McMMO ability \"" + m.group(3) + "\"");
+						LogUtil.error(line, "Invalid McMMO ability \"" + m.group(3) + "\"");
 						return null;
 					}
 					
