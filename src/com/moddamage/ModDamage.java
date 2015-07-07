@@ -42,19 +42,21 @@ public class ModDamage extends JavaPlugin
 
 	private static TagManager tagger = null;
 	private boolean earlyShutdown = false;
-	
+
+	private static ModDamage instance;
 
 	// //////////////////////// INITIALIZATION
+
 	@Override
 	public void onLoad() {
 		super.onLoad(); //Just in case bukkit loads stuff in here.
 		configuration = new PluginConfiguration(this); //Fixes NPE on registering extensions from onLoad in other plugins.
+		instance = this;
 	}
 
 	@Override
 	public void onEnable()
 	{
-		PluginCommand.setPlugin(this);
 		isEnabled = true;
 		try {
 			Class.forName("org.bukkit.projectiles.ProjectileSource");
@@ -98,7 +100,7 @@ public class ModDamage extends JavaPlugin
 			configuration.printToLog(Level.INFO, "Disabled.");
 		}
 
-		PluginCommand.setPlugin(null); //Prevents possible memory leaks on /reload command
+		ModDamage.instance = null; //Prevents possible memory leaks on /reload command
 	}
 
 	public void reload(boolean reloadingAll)
@@ -286,9 +288,6 @@ public class ModDamage extends JavaPlugin
 		}
 
 		abstract protected void handleCommand(Player player, Matcher matcher);
-
-		private static ModDamage plugin;
-		protected static void setPlugin(ModDamage plugin){ PluginCommand.plugin = plugin; }
 	}
 
 	private static boolean hasPermission(Player player, String permission)
@@ -398,4 +397,7 @@ public class ModDamage extends JavaPlugin
 		}
 	}
 
+	public static ModDamage getInstance() {
+		return instance;
+	}
 }

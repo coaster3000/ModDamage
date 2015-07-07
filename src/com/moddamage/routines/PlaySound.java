@@ -20,15 +20,17 @@ public class PlaySound extends Routine
     private final IDataProvider<Player> playerDP;
 	private final IDataProvider<Location> locDP;
 	private final Sound sound;
+	private final String soundString;
 	private final IDataProvider<Integer> volumeDP;
 	private final IDataProvider<Integer> pitchDP;
 
-	protected PlaySound(ScriptLine scriptLine, IDataProvider<Player> playerDP, IDataProvider<Location> locDP, Sound sound, IDataProvider<Integer> volumeDP, IDataProvider<Integer> pitchDP)
+	protected PlaySound(ScriptLine scriptLine, IDataProvider<Player> playerDP, IDataProvider<Location> locDP, Sound sound, String soundString, IDataProvider<Integer> volumeDP, IDataProvider<Integer> pitchDP)
 	{
 		super(scriptLine);
         this.playerDP = playerDP;
 		this.locDP = locDP;
         this.sound = sound;
+        this.soundString = soundString;
         this.volumeDP = volumeDP;
         this.pitchDP = pitchDP;
 	}
@@ -42,7 +44,10 @@ public class PlaySound extends Routine
 		Integer pitch = pitchDP.get(data);
 		if (player == null || loc == null || volume == null || pitch == null) return;
 
-        player.playSound(loc, sound, volume / 100.0f,  pitch / 100.0f);
+		if (sound == null)
+			player.playSound(loc, soundString, volume / 100.0f, pitch / 100.0f);
+		else
+			player.playSound(loc, sound, volume / 100.0f,  pitch / 100.0f);
 	}
 
 	public static void register()
@@ -62,16 +67,13 @@ public class PlaySound extends Routine
 			IDataProvider<Location> locDP = DataProvider.parse(scriptLine, info, Location.class, locStr);
 			if (locDP == null) return null;
 			
-			Sound sound;
+			Sound sound = null;
+			String soundString = matcher.group(2);
 			try
 			{
-				sound = Sound.valueOf(matcher.group(2).toUpperCase());
+				sound = Sound.valueOf(soundString.toUpperCase());
 			}
-			catch (IllegalArgumentException e)
-			{
-				LogUtil.error("Bad sound: \""+matcher.group(2)+"\"");
-				return null;
-			}
+			catch (IllegalArgumentException e) { } // Ignore as we can send strings for sound effects.
 
 			
 			IDataProvider<Integer> volumeDP = DataProvider.parse(scriptLine, info, Integer.class, matcher.group(4));
