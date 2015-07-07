@@ -13,8 +13,8 @@ public abstract class BaseConfigScript extends BaseConfig implements ConfigScrip
 	private boolean enabled = true;
 	private int priority = 0;
 
-	public BaseConfigScript(Plugin plugin,String name, File configFile) {
-		super(plugin,name, configFile);
+	public BaseConfigScript(Plugin plugin, File configFile, String name) {
+		super(plugin, configFile, name);
 	}
 
 	protected final void setPriority(int priority) {

@@ -25,7 +25,7 @@ public abstract class BaseConfig implements Config {
 	boolean appendLog;
 	File logFile;
 
-	public BaseConfig(Plugin plugin, String name, File configFile) {
+	public BaseConfig(Plugin plugin, File configFile, String name) {
 		this.plugin = plugin;
 		this.configFile = configFile;
 		this.name = name;

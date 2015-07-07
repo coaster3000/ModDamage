@@ -39,7 +39,7 @@ public class PluginConfiguration extends BaseConfigScript
 
 	public PluginConfiguration(Plugin plugin)
 	{
-		super(plugin,configString_defaultConfigPath, new File(plugin.getDataFolder(), configString_defaultConfigPath));
+		super(plugin, new File(plugin.getDataFolder(), configString_defaultConfigPath), "config");
 	}
 	
 	int tags_save_interval;
