@@ -22,8 +22,8 @@ public class LogUtil {
 	public static void warning(LogHandle logHandle, String message) { logHandle.getLogger().addToLogRecord(OutputPreset.WARNING, message); }
 	public static void warning_strong(LogHandle logHandle, String message) { logHandle.getLogger().addToLogRecord(OutputPreset.WARNING_STRONG, message); }
 	public static void error(LogHandle logHandle, String message) { logHandle.getLogger().addToLogRecord(OutputPreset.FAILURE, message); }
-	public static void constant(LogHandle logHandle, String message) { logHandle.getLogger().addToLogRecord(OutputPreset.CONSTANT, ""); }
-	public static void console_only(LogHandle logHandle, String message) { logHandle.getLogger().addToLogRecord(OutputPreset.CONSOLE_ONLY, ""); }
+	public static void constant(LogHandle logHandle, String message) { logHandle.getLogger().addToLogRecord(OutputPreset.CONSTANT, message); }
+	public static void console_only(LogHandle logHandle, String message) { logHandle.getLogger().addToLogRecord(OutputPreset.CONSOLE_ONLY, message); }
 	public static void printToLog(LogHandle logHandle, Level level, String message) { logHandle.getLogger().printToLog(level, message); }
 	public static void printToLog(LogHandle logHandle, Level level, String message, Throwable thrown) { logHandle.getLogger().printToLog(level, message, thrown); }
 
@@ -47,9 +47,9 @@ public class LogUtil {
 	@Deprecated
 	public static void error(String message) { ModDamage.addToLogRecord(OutputPreset.FAILURE, message); }
 	@Deprecated
-	public static void constant(String message) { ModDamage.addToLogRecord(OutputPreset.CONSTANT, ""); }
+	public static void constant(String message) { ModDamage.addToLogRecord(OutputPreset.CONSTANT, message); }
 	@Deprecated
-	public static void console_only(String message) { ModDamage.addToLogRecord(OutputPreset.CONSOLE_ONLY, ""); }
+	public static void console_only(String message) { ModDamage.addToLogRecord(OutputPreset.CONSOLE_ONLY, message); }
 	@Deprecated
 	public static void printToLog(Level level, String message) { ModDamage.printToLog(level, message); }
 	@Deprecated
