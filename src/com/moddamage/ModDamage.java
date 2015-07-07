@@ -198,7 +198,7 @@ public class ModDamage extends JavaPlugin
 			{
 				boolean reloadingAll = matcher.group(1) != null;
 				if(player != null) configuration.printToLog(Level.INFO, "Reload initiated by user " + player.getName() + "...");
-				plugin.reload(reloadingAll);
+				instance.reload(reloadingAll);
 				if(player != null)
 					switch(configuration.getLoadState())
 					{
