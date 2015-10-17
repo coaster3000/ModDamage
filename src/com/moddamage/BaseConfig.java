@@ -11,10 +11,11 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.moddamage.backend.ScriptLine;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import com.moddamage.backend.ScriptLine;
 
 public abstract class BaseConfig implements Config {
 

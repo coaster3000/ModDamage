@@ -115,7 +115,7 @@ public class RoutineAliaser extends Aliaser<ScriptCapturedLines, ScriptCapturedL
 		
 		isParsingAlias = true;
 		
-		Routines routines = new Routines();
+		Routines routines = new Routines(scriptLine.origin);
 		ScriptLineHandler routinesLineHandler = routines.getLineHandler(info);
 		lines.parse(routinesLineHandler);
 		routinesLineHandler.done();

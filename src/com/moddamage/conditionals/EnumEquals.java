@@ -86,7 +86,7 @@ public class EnumEquals extends Conditional<Enum>
 						types.add(type);
 					}
 					
-					if(types == null || types.isEmpty()) return null;
+					if(types.isEmpty()) return null;
 					
 					return new EnumEquals(enumDP, types);
 				}

@@ -35,6 +35,9 @@ public class PluginConfiguration extends BaseConfigScript
 	
 	protected static final String configString_defaultConfigPath = "config.mdscript";
 	private File scriptDirectory;
+	private ScriptManager.LoadMethod loadMethod = ScriptManager.LoadMethod.ENABLED_SETTING;
+	private ScriptManager.LoadMethod prevLoadMethod;
+	private boolean recurseDirectorties = false;
 
 
 	public PluginConfiguration(Plugin plugin)
@@ -56,7 +59,9 @@ public class PluginConfiguration extends BaseConfigScript
 		getLogger().setLogFile(null);
 		
 		tags_save_interval = 200;
-		
+
+		scriptDirectory = plugin.getDataFolder();
+
 		serverBindaddr = null;
 		serverPort = 8765;
 		serverUsername = null;
@@ -77,6 +82,21 @@ public class PluginConfiguration extends BaseConfigScript
 		return scriptDirectory;
 	}
 
+	public ScriptManager.LoadMethod getLoadMethod() {
+		return loadMethod;
+	}
+
+	private void setLoadMethod(ScriptManager.LoadMethod loadMethod) {
+		if (loadMethod != null) {
+			this.prevLoadMethod = this.loadMethod; //Used to determine if full reload is needed.
+			this.loadMethod = loadMethod;
+		}
+	}
+
+	public boolean isRecurseDirectortiesAllowed() {
+		return recurseDirectorties;
+	}
+
 	private class SettingsLineHandler implements ScriptLineHandler
 	{
 		private Pattern settingPattern = Pattern.compile("\\s*([^=]+?)\\s*=\\s*(.*?)\\s*");
@@ -95,7 +115,6 @@ public class PluginConfiguration extends BaseConfigScript
 
 			LogUtil.info_verbose(PluginConfiguration.this, line, "setting: '"+name+"' = '"+value+"'");
 			
-			
 			if (name.equals("debugging")) {
 				try {
 					getLogger().currentSetting = DebugSetting.valueOf(value.toUpperCase());
@@ -109,6 +128,9 @@ public class PluginConfiguration extends BaseConfigScript
 			}
 			else if (name.equals("append-logs")) {
 				appendLog = Boolean.parseBoolean(value);
+			}
+			else if (name.equals("recursive-scan")) {
+				PluginConfiguration.this.recurseDirectorties = Boolean.parseBoolean(value);
 			}
 			else if (name.equals("disable-death-messages")) {
 				MDEvent.disableDeathMessages = Boolean.parseBoolean(value);
@@ -146,6 +168,24 @@ public class PluginConfiguration extends BaseConfigScript
 			}
 			else if (name.equals("server-password")) {
 				serverPassword = value;
+			}
+			else if (name.equals("script-directory")) {
+				if (value.isEmpty()) scriptDirectory = plugin.getDataFolder();
+				else scriptDirectory = new File(plugin.getDataFolder(), value);
+
+				if (scriptDirectory.isFile()) {
+					LogUtil.error(PluginConfiguration.this, line, String.format("%s is not a directory! Please correct this in your primary script! Resorting to default directory!", scriptDirectory.getPath()));
+					scriptDirectory = plugin.getDataFolder();
+				}
+			}
+			else if (name.equals("load-method")) {
+				if (value.isEmpty()) loadMethod = ScriptManager.LoadMethod.ENABLED_SETTING;
+				else try {
+					setLoadMethod(ScriptManager.LoadMethod.valueOf(value));
+				} catch (Exception e) {
+					LogUtil.error(PluginConfiguration.this, line, String.format("%s is not a valid load method! Resorting to ENABLED setting.", value));
+					setLoadMethod(ScriptManager.LoadMethod.ENABLED_SETTING);
+				}
 			}
 			else if (name.equals("priority")) {
 				try {
@@ -200,7 +240,7 @@ public class PluginConfiguration extends BaseConfigScript
 						return null;
 					}
 					
-					return e.getLineHandler();
+					return e.getLineHandler(this);
 				}
 				return null;
 			}
@@ -224,8 +264,7 @@ public class PluginConfiguration extends BaseConfigScript
 		resetDefaultSettings();
 		Command.instance.reset();
 		Repeat.instance.reset();
-		MDEvent.unregisterEvents();
-		MDEvent.clearEvents();
+		MDEvent.clearEvents(this);
 		
 		addToLogRecord(OutputPreset.CONSTANT, "[" + plugin.getDescription().getName() + "] v" + plugin.getDescription().getVersion() + " loading...");
 
@@ -306,12 +345,12 @@ public class PluginConfiguration extends BaseConfigScript
 		if (loggingEnabled)
 		{
 			if (getLogger().log.getHandlers().length > 0)
-				addToLogRecord(OutputPreset.INFO, "File Logging for 'config.yml' is enabled.");
+				addToLogRecord(OutputPreset.INFO, "File Logging for 'config' is enabled.");
 			else
-				addToLogRecord(OutputPreset.FAILURE, "File logging failed to load for '" + "config.yml" + "'.");
+				addToLogRecord(OutputPreset.FAILURE, "File logging failed to load for '" + "config" + "'.");
 		}
 		else
-			addToLogRecord(OutputPreset.INFO, "File logging for '" + "config.yml" + "' is disabled.");
+			addToLogRecord(OutputPreset.INFO, "File logging for '" + "config" + "' is disabled.");
 
 		// Default message settings
 		if(MDEvent.disableDeathMessages)
@@ -341,9 +380,10 @@ public class PluginConfiguration extends BaseConfigScript
 		} else
 			LogUtil.info_verbose(this, "Web server not started");
 		
-		
-		this.pluginState = LoadState.combineStates(MDEvent.combinedLoadState, AliasManager.getState());
-		
+		this.pluginState = LoadState.combineStates(MDEvent.getCombinedLoadStates(this), AliasManager.getState());
+
+		if (prevLoadMethod != null && prevLoadMethod != loadMethod) ModDamage.getScriptManager().reload(true);
+
 		double time = sw.stop(TM_MAINLOAD);
 		String timer = "(" + time + " \u00b5s) ";
 		
@@ -392,10 +432,6 @@ public class PluginConfiguration extends BaseConfigScript
 		return true;
 	}
 
-	public String getName() {
-		return "config.yml";
-	}
-	
 	protected String getDefaultFileContents() {
 		StringBuilder outputString = new StringBuilder();
 		outputString.append("#Auto-generated config at ").append((new Date()).toString()).append(".").append(newline)
@@ -412,24 +448,46 @@ public class PluginConfiguration extends BaseConfigScript
 		outputString.append(newline).append("\t#server password = nuggets");
 
 		outputString.append(newline);
+		outputString.append(newline);
+		outputString.append(newline).append("\t## The directory to scan for scripts.");
+		outputString.append(newline).append("\t## This excludes this file.");
+		outputString.append(newline).append("\t## Default is root folder which is the same place as this file.");
+		outputString.append(newline).append("\tscript directory = ");
+		outputString.append(newline).append("\t## Allows traversing all directories specified from root to scan for scripts. Value may be true or false.");
+		outputString.append(newline).append("\trecursive scan = false");
+
+		outputString.append(newline).append("\t## This defines the type of loading style.");
+		outputString.append(newline).append("\t## Valid options are: PRIORITY_PARSE, ENABLED_SETTING, MASTER_LIST");
+//		outputString.append(newline).append("\t## MASTER_LIST: uses priorities for execution order and then this file has a list of scripts to load.");
+		outputString.append(newline).append("\t## ENABLED_SETTING: Each script has a setting called enabled. If true it will load this file.");
+		outputString.append(newline).append("\t## PRIORITY_PARSE: Same as enabled setting but uses the priority number. If the number is 0 or less it will be considered disabled.");
+		outputString.append(newline).append("\tload-method = ENABLED_SETTING");
+
+		outputString.append(newline);
+		outputString.append(newline);
 		outputString.append(newline).append("\tdebugging = normal");
-		outputString.append(newline).append("\tdisable death messages = no");
-		outputString.append(newline).append("\tdisable join messages = no");
-		outputString.append(newline).append("\tdisable quit messages = no");
-		outputString.append(newline).append("\tdisable kick messages = no");
+
+		outputString.append(newline);
+		outputString.append(newline).append("\t#The following values may either be true or false.");
+		outputString.append(newline).append("\tdisable death messages = false");
+		outputString.append(newline).append("\tdisable join messages = false");
+		outputString.append(newline).append("\tdisable quit messages = false");
+		outputString.append(newline).append("\tdisable kick messages = false");
+
+		outputString.append(newline);
 		outputString.append(newline).append("\t#This interval should be tinkered with ONLY if you understand the implications.");
 		outputString.append(newline).append("\ttags save interval = ").append(tags_save_interval);
 
 		outputString.append(newline).append(newline).append("\t## File Logging settings.");
-//		outputString.append(newline).append("\t## To Enable File Logging. Uncomment both lines below.");
-//		outputString.append(newline).append("\t##log file = config.log");
-//		outputString.append(newline).append("\t##append logs = yes");
+		outputString.append(newline).append("\t## To Enable File Logging. Uncomment both lines below.");
+		outputString.append(newline).append("\t##log file = config.log");
+		outputString.append(newline).append("\t##append logs = true");
 
 //		outputString.append(newline).append(newline).append("#Debug File Logging");
-		outputString.append(newline).append("#Uncomment the following to enable file logging");
-		outputString.append(newline).append("#Logging:");
-		outputString.append(newline).append(String.format("#\tfile: %s.log", getName()));
-		outputString.append(newline).append("#\tappend: true");
+//		outputString.append(newline).append("#Uncomment the following to enable file logging");
+//		outputString.append(newline).append("#Logging:");
+//		outputString.append(newline).append(String.format("#\tfile: %s.log", getName()));
+//		outputString.append(newline).append("#\tappend: true");
 
 		outputString.append(newline).append(newline).append("Aliases");
 		for(AliasManager aliasType : AliasManager.values())

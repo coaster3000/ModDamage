@@ -1,5 +1,9 @@
 package com.moddamage;
 
+import com.google.common.collect.MapMaker;
+
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -32,8 +36,8 @@ import com.moddamage.routines.Routines;
 
 public class MDEvent implements Listener
 {
-	public static Map<String, MDEvent> allEvents = new HashMap<String, MDEvent>();
-	public static Map<String, List<MDEvent>> eventCategories = new HashMap<String, List<MDEvent>>();
+	public final static Map<String, MDEvent> allEvents = new HashMap<String, MDEvent>();
+	public final static Map<String, List<MDEvent>> eventCategories = new HashMap<String, List<MDEvent>>();
 	
 	public static void registerVanillaEvents()
 	{
@@ -146,8 +150,9 @@ public class MDEvent implements Listener
 		addEvents(category, Arrays.asList(eventsArray));
 	}
 	
-	public static void addEvents(String category, List<MDEvent> newEvents)
+	public static void addEvents(String category, Collection<MDEvent> events)
 	{
+		List<MDEvent> newEvents = new ArrayList<MDEvent>(events);
 		if (eventCategories.containsKey(category) && eventCategories.get(category) != null) 
 		{
 			List<MDEvent> oldEvents = eventCategories.get(category);
@@ -158,9 +163,7 @@ public class MDEvent implements Listener
 		eventCategories.put(category, newEvents);
 		
 		for (MDEvent event : newEvents)
-		{
 			allEvents.put(event.name(), event);
-		}
 	}
 	
 	public static void addEvent(String category, MDEvent event)
@@ -180,11 +183,14 @@ public class MDEvent implements Listener
 	{
 		try
 		{
-			if (routines != null) {
-                routines.run(data);
-                eventFinished(true);
-                return;
-            }
+			for (Reference<Routines> routines : routines_cached) {
+				Routines r;
+				if (routines != null && (r = routines.get()) != null) {
+					r.run(data); //FIXME: Variable bleeds through scripts...
+					return;
+				}
+			}
+			eventFinished(true);
 		}
 		catch (BailException e)
 		{
@@ -192,26 +198,49 @@ public class MDEvent implements Listener
 		}
         eventFinished(false);
 	}
-	protected Routines routines = null;
-	protected LoadState loadState = Config.LoadState.NOT_LOADED;
-	protected static LoadState combinedLoadState = Config.LoadState.NOT_LOADED;
+	protected Map<String, Routines> routines = new MapMaker().makeMap();
+	protected List<Reference<Routines>> routines_cached = new LinkedList<Reference<Routines>>();
 	
-	public LoadState getState(){ return loadState; }
+	protected Map<String, LoadState> loadStates = new HashMap<String, LoadState>();
+	private static Map<String, LoadState> combinedLoadStates = new HashMap<String, LoadState>();
+	
+	public static LoadState getCombinedLoadStates(BaseConfig config) {
+		return combinedLoadStates.containsKey(config.getName())? combinedLoadStates.get(config.getName()) : LoadState.NOT_LOADED;
+	}
+	
+	protected static void setCombinedLoadState(BaseConfig config, LoadState state) {
+		combinedLoadStates.put(config.getName(), state);
+	}
+	
+	public LoadState getState(BaseConfig config){ 
+			return (loadStates.containsKey(config.getName())) ? loadStates.get(config.getName()) : LoadState.NOT_LOADED;
+	}
 	
 	public String name() { return this.getClass().getSimpleName(); }
 	
 
-	public ScriptLineHandler getLineHandler()
+	public ScriptLineHandler getLineHandler(ConfigScript config)
 	{
-		if (routines == null)
-			routines = new Routines();
+		String name = config.getName();
 
-		LogUtil.info("on " + name());
+		if (config.isEnabled() && !routines.containsKey(name)) {
+			Routines newRoutines = new Routines(config);
+			routines.put(name, newRoutines);
+			routines_cached.add(new WeakReference<Routines>(newRoutines));
+		} else if (!config.isEnabled()) {
+			if (routines.containsKey(name)) routines.remove(name);
+			return null;
+		}
+
+		LogUtil.info(config, "on " + name());
 		
-		loadState = Config.LoadState.SUCCESS;
-		combinedLoadState = Config.LoadState.combineStates(combinedLoadState, loadState);
+		loadStates.put(name, LoadState.SUCCESS);
+		if (combinedLoadStates.containsKey(name))
+			combinedLoadStates.put(name, LoadState.combineStates(combinedLoadStates.get(name), loadStates.get(name)));
+		else
+			combinedLoadStates.put(name, loadStates.get(name));	
 		
-		return routines.getLineHandler(myInfo);
+		return routines.get(name).getLineHandler(myInfo);
 	}
 	
 	
@@ -219,15 +248,24 @@ public class MDEvent implements Listener
 	{
 		return allEvents.get(name);
 	}
-	
 	public static void registerEvents()
 	{
 		for (Entry<String, MDEvent> entry : allEvents.entrySet()) {
-			if (entry.getValue().routines != null && !entry.getValue().routines.isEmpty())
-				Bukkit.getPluginManager().registerEvents(entry.getValue(), ModDamage.configuration.plugin);
+			if (entry.getValue().routines != null && !entry.getValue().routines.isEmpty()) {
+				boolean found = false;
+				for (Routines r : entry.getValue().routines.values()) //Must iterate to make sure routines exist.
+					if (!r.isEmpty()) {
+						found = true;
+						break;
+					}
+				if (found)
+					Bukkit.getPluginManager().registerEvents(entry.getValue(), ModDamage.getInstance());
+				else //Remove unused stuff
+					HandlerList.unregisterAll(entry.getValue());
+			}
 		}
 	}
-	
+
 	public static void unregisterEvents()
 	{
 		for (Entry<String, MDEvent> entry : allEvents.entrySet()) {
@@ -235,13 +273,18 @@ public class MDEvent implements Listener
 		}
 	}
 	
-	public static void clearEvents()
+	public static void clearEvents(ConfigScript script)
 	{
 		for (Entry<String, MDEvent> entry : allEvents.entrySet()) {
-			entry.getValue().routines = null;
+			MDEvent event = entry.getValue();
+			if (event.routines == null) continue;
+
+			Routines routines = event.routines.get(script.getName());
+			if (routines == null) continue;
+
+			routines.clear();
 		}
 	}
-
 
     private static List<EventFinishedListener> whenEventFinishesList = new ArrayList<EventFinishedListener>();
 
@@ -261,4 +304,6 @@ public class MDEvent implements Listener
         }
         whenEventFinishesList.clear();
     }
+
+
 };

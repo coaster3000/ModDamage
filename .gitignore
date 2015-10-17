@@ -13,3 +13,4 @@ commons-io-2.4-src
 out/
 *.iws
 *.ipr
+src/rebel.xml

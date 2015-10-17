@@ -3,6 +3,7 @@ package com.moddamage.routines;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.moddamage.ConfigScript;
 import com.moddamage.LogUtil;
 import com.moddamage.ModDamage;
 import com.moddamage.backend.BailException;
@@ -16,15 +17,21 @@ import com.moddamage.routines.nested.If;
 public class Routines
 {
 	public List<Routine> routines;
+	private ConfigScript config;
 	
-	public Routines()
+	public Routines(ConfigScript config)
 	{
-		this(new ArrayList<Routine>());
+		this(new ArrayList<Routine>(), config);
 	}
 	
-	public Routines(List<Routine> routines)
+	public Routines(List<Routine> routines, ConfigScript config)
 	{
 		this.routines = routines;
+		this.config = config;
+	}
+	
+	public ConfigScript getConfig() {
+		return config;
 	}
 	
 	public void run(EventData data) throws BailException
@@ -53,7 +60,14 @@ public class Routines
 		ModDamage.changeIndentation(true);
 		return new RoutinesLineHandler(info);
 	}
-	
+
+	/**
+	 * Clears all routines.
+	 */
+	public void clear() {
+		if (routines != null) routines.clear();
+	}
+
 	protected class RoutinesLineHandler implements ScriptLineHandler
 	{
 		IRoutineBuilder lastBuilder = null;
@@ -74,9 +88,9 @@ public class Routines
 							prev = routines.get(routines.size()-1);
 						
 						if (prev == null || !(prev instanceof If))
-							LogUtil.error("Else not after If");
+							LogUtil.error(config, "Else not after If");
 						else if (((If) prev).conditional == null)
-							LogUtil.error("Illegal Else after Else");
+							LogUtil.error(config, "Illegal Else after Else");
 						else {
 							If prevIf = (If) prev;
 							
